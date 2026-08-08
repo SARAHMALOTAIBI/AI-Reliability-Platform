@@ -96,3 +96,34 @@ def check_knowledge_gap(
         }
     return None
 
+def check_prompt_failure(
+    context_precision: float,
+    answer_relevancy: float,
+    precision_threshold: float = 0.7,
+    relevancy_threshold: float = 0.5,
+) -> Optional[dict]:
+    """
+    Rule: If retrieval was good (high context precision) but the answer
+    is not relevant to the question, the issue is likely with the prompt
+    or the model's reasoning, not the retrieved information.
+
+    Args:
+        context_precision: Score between 0 and 1
+        answer_relevancy: Score between 0 and 1 — how well the answer
+                           addresses the actual question asked
+    """
+    if context_precision >= precision_threshold and answer_relevancy < relevancy_threshold:
+        return {
+            "category": "PROMPT_FAILURE",
+            "subcategory": "LOW_ANSWER_RELEVANCY",
+            "severity": "HIGH" if answer_relevancy < 0.3 else "MEDIUM",
+            "confidence": 0.75,
+            "explanation": (
+                f"Context precision is high ({context_precision:.2f}) but "
+                f"answer relevancy is low ({answer_relevancy:.2f}). The "
+                f"retriever found relevant information, but the answer "
+                f"does not properly address the question. This suggests "
+                f"a prompt clarity issue or a model reasoning failure."
+            ),
+        }
+    return None

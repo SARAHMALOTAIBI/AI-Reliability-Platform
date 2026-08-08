@@ -11,7 +11,9 @@ from root_cause.rules.retrieval_rules import (
     check_retrieval_failure,
     check_generation_hallucination,
     check_knowledge_gap,
+    check_prompt_failure,
 )
+
 
 
 
@@ -61,7 +63,18 @@ def run_rules_pipeline(metrics: dict) -> Optional[dict]:
         if knowledge_gap_diagnosis is not None:
             return knowledge_gap_diagnosis
 
+    # Priority 4: Check for prompt/reasoning failure
+    answer_relevancy = metrics.get("answer_relevancy")
+    if answer_relevancy is not None:
+        prompt_failure_diagnosis = check_prompt_failure(
+            context_precision=context_precision,
+            answer_relevancy=answer_relevancy,
+        )
+        if prompt_failure_diagnosis is not None:
+            return prompt_failure_diagnosis
+
     return None
+
 
 
     # Priority 1: Check retrieval failure first — if retrieval itself
@@ -79,4 +92,4 @@ def run_rules_pipeline(metrics: dict) -> Optional[dict]:
         if hallucination_diagnosis is not None:
             return hallucination_diagnosis
 
-    return None
+    return Nones

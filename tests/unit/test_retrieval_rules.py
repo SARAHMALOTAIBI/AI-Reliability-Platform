@@ -51,3 +51,16 @@ def test_knowledge_gap_triggers_on_low_recall_good_precision():
 def test_knowledge_gap_does_not_trigger_on_good_recall():
     result = check_knowledge_gap(context_recall=0.9, context_precision=0.8)
     assert result is None
+
+from root_cause.rules.retrieval_rules import check_prompt_failure
+
+
+def test_prompt_failure_triggers_on_good_retrieval_low_relevancy():
+    result = check_prompt_failure(context_precision=0.85, answer_relevancy=0.3)
+    assert result is not None
+    assert result["category"] == "PROMPT_FAILURE"
+
+
+def test_prompt_failure_does_not_trigger_when_retrieval_is_bad():
+    result = check_prompt_failure(context_precision=0.4, answer_relevancy=0.3)
+    assert result is None
