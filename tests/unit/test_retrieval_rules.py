@@ -37,3 +37,17 @@ def test_hallucination_does_not_trigger_when_retrieval_is_bad():
         faithfulness=0.3,
     )
     assert result is None
+
+
+from root_cause.rules.retrieval_rules import check_knowledge_gap
+
+
+def test_knowledge_gap_triggers_on_low_recall_good_precision():
+    result = check_knowledge_gap(context_recall=0.3, context_precision=0.8)
+    assert result is not None
+    assert result["category"] == "KNOWLEDGE_BASE_FAILURE"
+
+
+def test_knowledge_gap_does_not_trigger_on_good_recall():
+    result = check_knowledge_gap(context_recall=0.9, context_precision=0.8)
+    assert result is None

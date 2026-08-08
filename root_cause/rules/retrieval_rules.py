@@ -63,3 +63,36 @@ def check_generation_hallucination(
             ),
         }
     return None
+
+def check_knowledge_gap(
+    context_recall: float,
+    context_precision: float,
+    recall_threshold: float = 0.5,
+) -> Optional[dict]:
+    """
+    Rule: If context recall is low but precision is fine, the retriever
+    found relevant chunks, but the knowledge base is missing information
+    needed to fully answer the question.
+
+    Args:
+        context_recall: Score between 0 and 1 — how much of the needed
+                         information was actually retrieved
+        context_precision: Score between 0 and 1 — how relevant the
+                            retrieved chunks were
+    """
+    if context_recall < recall_threshold and context_precision >= 0.5:
+        return {
+            "category": "KNOWLEDGE_BASE_FAILURE",
+            "subcategory": "MISSING_INFORMATION",
+            "severity": "HIGH" if context_recall < 0.3 else "MEDIUM",
+            "confidence": 0.8,
+            "explanation": (
+                f"Context recall is {context_recall:.2f}, below the "
+                f"threshold of {recall_threshold}, while context precision "
+                f"is acceptable ({context_precision:.2f}). The retrieved "
+                f"chunks are relevant, but the knowledge base likely lacks "
+                f"the full information needed to answer the question."
+            ),
+        }
+    return None
+
