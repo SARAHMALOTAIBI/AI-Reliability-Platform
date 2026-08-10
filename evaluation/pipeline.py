@@ -6,6 +6,9 @@ from evaluation.evaluators.correctness import (
 from evaluation.evaluators.faithfulness import (
     FaithfulnessEvaluator,
 )
+from evaluation.evaluators.context_precision import (
+    ContextPrecisionEvaluator,
+)
 from evaluation.evaluators.hallucination import (
     HallucinationRiskEvaluator,
 )
@@ -21,6 +24,7 @@ from evaluation.evaluators.status import (
 class EvaluationPipelineResult:
     correctness_score: float
     faithfulness_score: float
+    context_precision_score: float
     hallucination_risk: float
     status: str
     explanation: str
@@ -38,6 +42,10 @@ class EvaluationPipeline:
             FaithfulnessEvaluator()
         )
 
+        self.context_precision_evaluator = (
+            ContextPrecisionEvaluator()
+        )
+
         self.numeric_evaluator = (
             NumericConsistencyEvaluator()
         )
@@ -52,6 +60,7 @@ class EvaluationPipeline:
 
     def evaluate(
         self,
+        question: str,
         answer: str,
         contexts: list[str],
         reference_answer: str | None = None,
@@ -93,6 +102,13 @@ class EvaluationPipeline:
         faithfulness = (
             self.faithfulness_evaluator.evaluate(
                 answer=clean_answer,
+                combined_context=combined_context,
+            )
+        )
+
+        context_precision = (
+            self.context_precision_evaluator.evaluate(
+                question=question.strip(),
                 combined_context=combined_context,
             )
         )
@@ -146,6 +162,7 @@ class EvaluationPipeline:
             status.explanation,
             correctness.explanation,
             faithfulness.explanation,
+            context_precision.explanation,
             numeric.explanation,
             hallucination.explanation,
         ]
@@ -157,6 +174,10 @@ class EvaluationPipeline:
             ),
             faithfulness_score=round(
                 faithfulness_score,
+                4,
+            ),
+            context_precision_score=round(
+                context_precision.score,
                 4,
             ),
             hallucination_risk=(
@@ -173,11 +194,13 @@ evaluation_pipeline = EvaluationPipeline()
 
 
 def run_evaluation(
+    question: str,
     answer: str,
     contexts: list[str],
     reference_answer: str | None = None,
 ) -> EvaluationPipelineResult:
     return evaluation_pipeline.evaluate(
+        question=question,
         answer=answer,
         contexts=contexts,
         reference_answer=reference_answer,

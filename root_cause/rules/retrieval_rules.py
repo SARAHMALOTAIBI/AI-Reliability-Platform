@@ -38,7 +38,7 @@ def check_retrieval_failure(context_precision: float, threshold: float = 0.5) ->
 def check_generation_hallucination(
     context_precision: float,
     faithfulness: float,
-    precision_threshold: float = 0.7,
+    precision_threshold: float = 0.6,
     faithfulness_threshold: float = 0.5,
 ) -> Optional[dict]:
     """
@@ -99,7 +99,7 @@ def check_knowledge_gap(
 def check_prompt_failure(
     context_precision: float,
     answer_relevancy: float,
-    precision_threshold: float = 0.7,
+    precision_threshold: float = 0.6,
     relevancy_threshold: float = 0.5,
 ) -> Optional[dict]:
     """
