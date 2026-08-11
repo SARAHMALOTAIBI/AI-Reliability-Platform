@@ -18,33 +18,92 @@ def get_embedding_model() -> SentenceTransformer:
     return SentenceTransformer(MODEL_NAME)
 
 
-def semantic_similarity(text_a: str, text_b: str) -> float:
+def pairwise_semantic_similarity(
+    texts_a: list[str],
+    texts_b: list[str],
+) -> np.ndarray:
+    """
+    Return a semantic similarity matrix.
+
+    Shape:
+        len(texts_a) x len(texts_b)
+    """
+
+    clean_a = [
+        text.strip()
+        for text in texts_a
+        if text and text.strip()
+    ]
+
+    clean_b = [
+        text.strip()
+        for text in texts_b
+        if text and text.strip()
+    ]
+
+    if not clean_a or not clean_b:
+        return np.zeros(
+            (
+                len(clean_a),
+                len(clean_b),
+            ),
+            dtype=float,
+        )
+
+    embeddings = get_embedding_model().encode(
+        clean_a + clean_b,
+        normalize_embeddings=True,
+    )
+
+    a_embeddings = embeddings[
+        : len(clean_a)
+    ]
+
+    b_embeddings = embeddings[
+        len(clean_a) :
+    ]
+
+    matrix = np.matmul(
+        a_embeddings,
+        b_embeddings.T,
+    )
+
+    return np.clip(
+        matrix,
+        0.0,
+        1.0,
+    )
+
+
+def semantic_similarity(
+    text_a: str,
+    text_b: str,
+) -> float:
     """
     Calculate semantic similarity between two texts.
 
     Returns a score between 0 and 1.
     """
-    clean_text_a = text_a.strip()
-    clean_text_b = text_b.strip()
 
-    if not clean_text_a or not clean_text_b:
+    clean_a = text_a.strip()
+    clean_b = text_b.strip()
+
+    if not clean_a or not clean_b:
         return 0.0
 
-    embeddings = get_embedding_model().encode(
-        [clean_text_a, clean_text_b],
-        normalize_embeddings=True,
+    matrix = pairwise_semantic_similarity(
+        [clean_a],
+        [clean_b],
     )
 
     score = float(
-        np.dot(
-            embeddings[0],
-            embeddings[1],
-        )
+        matrix[0][0]
     )
 
-    normalized_score = max(
-        0.0,
-        min(1.0, score),
+    return round(
+        max(
+            0.0,
+            min(1.0, score),
+        ),
+        4,
     )
-
-    return round(normalized_score, 4)

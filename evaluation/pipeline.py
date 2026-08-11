@@ -1,13 +1,19 @@
-from dataclasses import dataclass
+﻿from dataclasses import dataclass
 
+from evaluation.evaluators.answer_relevancy import (
+    AnswerRelevancyEvaluator,
+)
+from evaluation.evaluators.context_precision import (
+    ContextPrecisionEvaluator,
+)
+from evaluation.evaluators.context_recall import (
+    ContextRecallEvaluator,
+)
 from evaluation.evaluators.correctness import (
     CorrectnessEvaluator,
 )
 from evaluation.evaluators.faithfulness import (
     FaithfulnessEvaluator,
-)
-from evaluation.evaluators.context_precision import (
-    ContextPrecisionEvaluator,
 )
 from evaluation.evaluators.hallucination import (
     HallucinationRiskEvaluator,
@@ -25,6 +31,8 @@ class EvaluationPipelineResult:
     correctness_score: float
     faithfulness_score: float
     context_precision_score: float
+    context_recall_score: float | None
+    answer_relevancy_score: float
     hallucination_risk: float
     status: str
     explanation: str
@@ -46,6 +54,14 @@ class EvaluationPipeline:
             ContextPrecisionEvaluator()
         )
 
+        self.context_recall_evaluator = (
+            ContextRecallEvaluator()
+        )
+
+        self.answer_relevancy_evaluator = (
+            AnswerRelevancyEvaluator()
+        )
+
         self.numeric_evaluator = (
             NumericConsistencyEvaluator()
         )
@@ -65,7 +81,13 @@ class EvaluationPipeline:
         contexts: list[str],
         reference_answer: str | None = None,
     ) -> EvaluationPipelineResult:
+        clean_question = question.strip()
         clean_answer = answer.strip()
+
+        if not clean_question:
+            raise ValueError(
+                "The question cannot be empty."
+            )
 
         if not clean_answer:
             raise ValueError(
@@ -108,8 +130,22 @@ class EvaluationPipeline:
 
         context_precision = (
             self.context_precision_evaluator.evaluate(
-                question=question.strip(),
-                combined_context=combined_context,
+                question=clean_question,
+                contexts=clean_contexts,
+            )
+        )
+
+        context_recall = (
+            self.context_recall_evaluator.evaluate(
+                reference_answer=clean_reference,
+                contexts=clean_contexts,
+            )
+        )
+
+        answer_relevancy = (
+            self.answer_relevancy_evaluator.evaluate(
+                question=clean_question,
+                answer=clean_answer,
             )
         )
 
@@ -163,9 +199,16 @@ class EvaluationPipeline:
             correctness.explanation,
             faithfulness.explanation,
             context_precision.explanation,
+            answer_relevancy.explanation,
             numeric.explanation,
             hallucination.explanation,
         ]
+
+        if context_recall is not None:
+            explanation_parts.insert(
+                4,
+                context_recall.explanation,
+            )
 
         return EvaluationPipelineResult(
             correctness_score=round(
@@ -178,6 +221,18 @@ class EvaluationPipeline:
             ),
             context_precision_score=round(
                 context_precision.score,
+                4,
+            ),
+            context_recall_score=(
+                round(
+                    context_recall.score,
+                    4,
+                )
+                if context_recall is not None
+                else None
+            ),
+            answer_relevancy_score=round(
+                answer_relevancy.score,
                 4,
             ),
             hallucination_risk=(
