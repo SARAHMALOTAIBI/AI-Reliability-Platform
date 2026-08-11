@@ -3,13 +3,16 @@
 
 def test_exact_supported_answer_is_healthy() -> None:
     result = run_evaluation(
+        question="What is the refund period?",
         answer=(
             "Customers may request a refund "
             "within 14 days."
         ),
         contexts=[
-            "Customers may request a refund "
-            "within 14 days."
+            (
+                "Customers may request a refund "
+                "within 14 days."
+            )
         ],
         reference_answer=(
             "Customers may request a refund "
@@ -25,13 +28,16 @@ def test_exact_supported_answer_is_healthy() -> None:
 
 def test_numeric_contradiction_is_critical() -> None:
     result = run_evaluation(
+        question="What is the refund period?",
         answer=(
             "Customers have 30 days "
             "to request a refund."
         ),
         contexts=[
-            "Customers may request a refund "
-            "within 14 days."
+            (
+                "Customers may request a refund "
+                "within 14 days."
+            )
         ],
         reference_answer=(
             "The refund period is 14 days."
