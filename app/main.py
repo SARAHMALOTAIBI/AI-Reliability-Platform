@@ -18,6 +18,7 @@ from app.schemas.evaluation_result import (
     RecommendationResponse,
 )
 from app.schemas.health_check import HealthCheckRequest
+from app.routers.history import router as history_router
 from evaluation.pipeline import run_evaluation
 from recommendation_engine.engine import (
     generate_recommendations,
@@ -32,8 +33,11 @@ from root_cause.rules.pipeline import (
 
 app = FastAPI(
     title="AI Reliability Platform",
-    version="0.6.0",
+    version="0.7.0",
 )
+
+
+app.include_router(history_router)
 
 
 @app.get("/")
