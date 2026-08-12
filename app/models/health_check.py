@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
@@ -86,6 +86,19 @@ class HealthCheck(Base):
     )
 
     diagnoses: Mapped[list["Diagnosis"]] = relationship(
+        back_populates="health_check",
+        cascade="all, delete-orphan",
+    )
+
+    evaluation_metric: Mapped["EvaluationMetric"] = relationship(
+        back_populates="health_check",
+        cascade="all, delete-orphan",
+        uselist=False,
+    )
+
+    recommendations: Mapped[
+        list["RecommendationRecord"]
+    ] = relationship(
         back_populates="health_check",
         cascade="all, delete-orphan",
     )

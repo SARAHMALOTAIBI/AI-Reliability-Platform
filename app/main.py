@@ -1,12 +1,14 @@
-﻿import uuid
+import uuid
 
 from fastapi import Depends, FastAPI
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models.diagnosis import Diagnosis
-from app.models.health_check import HealthCheck
-from app.models.retrieved_context import (
+from app.models import (
+    Diagnosis,
+    EvaluationMetric,
+    HealthCheck,
+    RecommendationRecord,
     RetrievedContext,
 )
 from app.schemas.evaluation_result import (
@@ -15,9 +17,7 @@ from app.schemas.evaluation_result import (
     HealthCheckResponse,
     RecommendationResponse,
 )
-from app.schemas.health_check import (
-    HealthCheckRequest,
-)
+from app.schemas.health_check import HealthCheckRequest
 from evaluation.pipeline import run_evaluation
 from recommendation_engine.engine import (
     generate_recommendations,
@@ -32,7 +32,7 @@ from root_cause.rules.pipeline import (
 
 app = FastAPI(
     title="AI Reliability Platform",
-    version="0.5.0",
+    version="0.6.0",
 )
 
 
@@ -70,9 +70,7 @@ def create_health_check(
         question=payload.question,
         answer=payload.answer,
         contexts=context_texts,
-        reference_answer=(
-            payload.reference_answer
-        ),
+        reference_answer=payload.reference_answer,
     )
 
     # Step 2 — Root Cause Engine
@@ -117,7 +115,7 @@ def create_health_check(
         diagnosis_dict
     )
 
-    # Step 5 — Persist health check
+    # Step 5 — Health Check record
     db_health_check = HealthCheck(
         id=uuid.uuid4(),
         project_id=payload.project_id,
@@ -152,52 +150,117 @@ def create_health_check(
         db.add(db_health_check)
         db.flush()
 
+        # Retrieved contexts
         for context in payload.contexts:
-            db_context = RetrievedContext(
-                id=uuid.uuid4(),
-                health_check_id=(
-                    db_health_check.id
-                ),
-                text=context.text,
-                source=context.source,
-                rank=context.rank,
-                retrieval_score=(
-                    context.retrieval_score
-                ),
+            db.add(
+                RetrievedContext(
+                    id=uuid.uuid4(),
+                    health_check_id=(
+                        db_health_check.id
+                    ),
+                    text=context.text,
+                    source=context.source,
+                    rank=context.rank,
+                    retrieval_score=(
+                        context.retrieval_score
+                    ),
+                )
             )
 
-            db.add(db_context)
-
-        if diagnosis_dict:
-            db_diagnosis = Diagnosis(
+        # Evaluation metrics + health score
+        db.add(
+            EvaluationMetric(
                 id=uuid.uuid4(),
                 health_check_id=(
                     db_health_check.id
                 ),
-                category=(
-                    diagnosis_dict["category"]
+                correctness_score=(
+                    result.correctness_score
                 ),
-                subcategory=(
-                    diagnosis_dict.get(
-                        "subcategory"
-                    )
+                faithfulness_score=(
+                    result.faithfulness_score
                 ),
-                severity=(
-                    diagnosis_dict["severity"]
+                context_precision_score=(
+                    result.context_precision_score
                 ),
-                confidence=(
-                    diagnosis_dict["confidence"]
+                context_recall_score=(
+                    result.context_recall_score
+                ),
+                answer_relevancy_score=(
+                    result.answer_relevancy_score
+                ),
+                hallucination_risk=(
+                    result.hallucination_risk
+                ),
+                overall_health_score=(
+                    health_score.score
+                ),
+                health_status=(
+                    health_score.status
+                ),
+                evaluation_status=(
+                    result.status
                 ),
                 explanation=(
-                    diagnosis_dict["explanation"]
+                    result.explanation
                 ),
             )
+        )
 
-            db.add(db_diagnosis)
+        # Diagnosis
+        if diagnosis_dict:
+            db.add(
+                Diagnosis(
+                    id=uuid.uuid4(),
+                    health_check_id=(
+                        db_health_check.id
+                    ),
+                    category=(
+                        diagnosis_dict["category"]
+                    ),
+                    subcategory=(
+                        diagnosis_dict.get(
+                            "subcategory"
+                        )
+                    ),
+                    severity=(
+                        diagnosis_dict["severity"]
+                    ),
+                    confidence=(
+                        diagnosis_dict["confidence"]
+                    ),
+                    explanation=(
+                        diagnosis_dict["explanation"]
+                    ),
+                )
+            )
 
             diagnosis_response = (
                 DiagnosisResponse(
                     **diagnosis_dict
+                )
+            )
+
+        # Recommendations
+        for item in recommendations:
+            db.add(
+                RecommendationRecord(
+                    id=uuid.uuid4(),
+                    health_check_id=(
+                        db_health_check.id
+                    ),
+                    priority=item.priority,
+                    action=item.action,
+                    expected_impact=(
+                        item.expected_impact
+                    ),
+                    difficulty=item.difficulty,
+                    affected_component=(
+                        item.affected_component
+                    ),
+                    supporting_evidence=(
+                        item.supporting_evidence
+                    ),
                 )
             )
 
@@ -225,7 +288,6 @@ def create_health_check(
         for item in recommendations
     ]
 
-    # Step 6 — Final AI Health Report
     return HealthCheckResponse(
         health_check_id=db_health_check.id,
         project_id=payload.project_id,
