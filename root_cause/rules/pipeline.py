@@ -9,11 +9,13 @@ in priority order.
 from typing import Optional
 
 from root_cause.rules.retrieval_rules import (
+    check_retrieval_failure,
     check_generation_hallucination,
     check_knowledge_gap,
     check_prompt_failure,
-    check_retrieval_failure,
+    check_verified_knowledge_gap,
 )
+
 
 
 def run_rules_pipeline(
@@ -96,5 +98,18 @@ def run_rules_pipeline(
 
         if prompt_failure_diagnosis is not None:
             return prompt_failure_diagnosis
+        
+    # Priority 5: Check verified knowledge base gap (highest confidence,
+    # only used if the Knowledge Base Verification Agent was run)
+    is_supported = metrics.get("is_supported")
+    if is_supported is not None:
+        verified_gap_diagnosis = check_verified_knowledge_gap(
+            is_supported=is_supported,
+            similarity_distance=metrics.get("similarity_distance", 1.0),
+            explanation=metrics.get("verification_explanation", ""),
+        )
+        if verified_gap_diagnosis is not None:
+            return verified_gap_diagnosis
+
 
     return None

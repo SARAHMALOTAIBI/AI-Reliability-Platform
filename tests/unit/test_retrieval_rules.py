@@ -64,3 +64,26 @@ def test_prompt_failure_triggers_on_good_retrieval_low_relevancy():
 def test_prompt_failure_does_not_trigger_when_retrieval_is_bad():
     result = check_prompt_failure(context_precision=0.4, answer_relevancy=0.3)
     assert result is None
+
+
+from root_cause.rules.retrieval_rules import check_verified_knowledge_gap
+
+
+def test_verified_knowledge_gap_triggers_when_not_supported():
+    result = check_verified_knowledge_gap(
+        is_supported=False,
+        similarity_distance=0.95,
+        explanation="No relevant documents found.",
+    )
+    assert result is not None
+    assert result["category"] == "KNOWLEDGE_BASE_FAILURE"
+    assert result["severity"] == "HIGH"
+
+
+def test_verified_knowledge_gap_does_not_trigger_when_supported():
+    result = check_verified_knowledge_gap(
+        is_supported=True,
+        similarity_distance=0.3,
+        explanation="Found in document.",
+    )
+    assert result is None

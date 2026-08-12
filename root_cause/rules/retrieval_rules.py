@@ -127,3 +127,37 @@ def check_prompt_failure(
             ),
         }
     return None
+
+
+
+def check_verified_knowledge_gap(
+    is_supported: bool,
+    similarity_distance: float,
+    explanation: str,
+) -> Optional[dict]:
+    """
+    Rule: Uses the Knowledge Base Verification Agent's direct check
+    against real company documents, instead of inferring from
+    retrieval metrics alone. This is more reliable than
+    check_knowledge_gap because it verifies against actual indexed
+    documents rather than statistical scores.
+
+    Args:
+        is_supported: Whether the verification agent found the answer
+                       supported by real documents.
+        similarity_distance: How close the best match was (lower = closer).
+        explanation: The agent's explanation of its finding.
+    """
+    if not is_supported:
+        return {
+            "category": "KNOWLEDGE_BASE_FAILURE",
+            "subcategory": "VERIFIED_MISSING_INFORMATION",
+            "severity": "HIGH" if similarity_distance > 0.9 else "MEDIUM",
+            "confidence": 0.95,
+            "explanation": (
+                f"Verified against the company's real knowledge base: "
+                f"{explanation}"
+            ),
+        }
+    return None
+
