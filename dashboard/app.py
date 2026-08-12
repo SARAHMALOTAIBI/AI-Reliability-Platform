@@ -11,7 +11,10 @@ from api_client import (
     get_health,
     get_health_check,
     get_history,
+    upload_knowledge_base_document,
+    verify_knowledge_base_answer,
 )
+
 from i18n import (
     localize_action,
     localize_diagnosis_explanation,
@@ -842,24 +845,18 @@ with st.sidebar:
 # Tabs
 # ============================================================
 
-overview_tab, run_tab, history_tab = (
+overview_tab, run_tab, history_tab, kb_tab = (
     st.tabs(
         [
-            tr(
-                lang,
-                "overview",
-            ),
-            tr(
-                lang,
-                "run_check",
-            ),
-            tr(
-                lang,
-                "history",
-            ),
+            tr(lang, "overview"),
+            tr(lang, "run_check"),
+            tr(lang, "history"),
+            "Knowledge Base",
         ]
     )
 )
+
+ 
 
 
 # ============================================================
@@ -1603,3 +1600,127 @@ with history_tab:
                 st.error(
                     str(exc)
                 )
+
+
+                # ============================================================
+# Knowledge Base
+# ============================================================
+
+with kb_tab:
+    st.header("Knowledge Base")
+    st.caption(
+        "Upload company documents and verify RAG answers "
+        "against them independently."
+    )
+
+    st.subheader("Upload Document")
+
+    with st.form("kb_upload_form"):
+        kb_project_id = st.text_input(
+            "Project ID",
+            value="customer-support-rag",
+            key="kb_upload_project_id",
+        )
+
+        uploaded_file = st.file_uploader(
+            "Choose a PDF file",
+            type=["pdf"],
+        )
+
+        upload_submitted = st.form_submit_button(
+            "Upload & Index",
+            use_container_width=True,
+            type="primary",
+        )
+
+    if upload_submitted:
+        if not kb_project_id.strip():
+            st.error("Project ID is required.")
+        elif uploaded_file is None:
+            st.error("Please choose a file to upload.")
+        else:
+            try:
+                with st.spinner("Uploading and indexing..."):
+                    file_bytes = uploaded_file.read()
+                    result = upload_knowledge_base_document(
+                        api_url,
+                        project_id=kb_project_id.strip(),
+                        file_bytes=file_bytes,
+                        filename=uploaded_file.name,
+                    )
+
+                if result.get("success"):
+                    st.success(result.get("message", "Indexed successfully."))
+                else:
+                    st.warning(result.get("message", "Indexing failed."))
+
+            except APIClientError as exc:
+                st.error(str(exc))
+
+    st.divider()
+
+    st.subheader("Verify an Answer")
+    st.caption(
+        "Check whether a question is actually supported by the "
+        "indexed documents for this project."
+    )
+
+    with st.form("kb_verify_form"):
+        verify_project_id = st.text_input(
+            "Project ID",
+            value="customer-support-rag",
+            key="kb_verify_project_id",
+        )
+
+        verify_question = st.text_area(
+            "Question",
+            value="What is the refund period?",
+            height=90,
+        )
+
+        verify_submitted = st.form_submit_button(
+            "Verify",
+            use_container_width=True,
+            type="primary",
+        )
+
+    if verify_submitted:
+        if not verify_project_id.strip():
+            st.error("Project ID is required.")
+        elif not verify_question.strip():
+            st.error("Question is required.")
+        else:
+            try:
+                with st.spinner("Searching knowledge base..."):
+                    result = verify_knowledge_base_answer(
+                        api_url,
+                        project_id=verify_project_id.strip(),
+                        question=verify_question.strip(),
+                    )
+
+                is_supported = result.get("is_supported")
+
+                if is_supported:
+                    st.success("✅ Supported by the knowledge base")
+                else:
+                    st.error("❌ Not supported — no relevant information found")
+
+                col1, col2 = st.columns(2)
+                col1.metric(
+                    "Similarity Distance",
+                    f"{result.get('similarity_distance', 0):.4f}",
+                    border=True,
+                )
+                col2.metric(
+                    "Source",
+                    result.get("best_match_source", "N/A"),
+                    border=True,
+                )
+
+                st.write(f"**Explanation:** {result.get('explanation', '')}")
+
+                with st.expander("Best Matching Text"):
+                    st.write(result.get("best_match_text", ""))
+
+            except APIClientError as exc:
+                st.error(str(exc))
