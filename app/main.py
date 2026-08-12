@@ -1,5 +1,13 @@
 import uuid
 
+from fastapi import UploadFile, File, Form
+import shutil
+import uuid as uuid_lib
+import os 
+
+from knowledge_base.indexing_service import index_document
+
+
 from fastapi import Depends, FastAPI
 from sqlalchemy.orm import Session
 
@@ -331,3 +339,49 @@ def create_health_check(
             recommendation_responses
         ),
     )
+
+
+@app.post("/api/v1/knowledge-base/upload")
+async def upload_document(
+    project_id: str = Form(...),
+    file: UploadFile = File(...),
+):
+    upload_dir = "uploads"
+    file_id = str(uuid_lib.uuid4())
+    file_path = f"{upload_dir}/{file_id}_{file.filename}"
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    try:
+        result = index_document(
+            file_path=file_path,
+            collection_name=project_id,
+            source_name=file.filename,
+        )
+    finally:
+        os.remove(file_path)
+
+    return result
+
+
+from knowledge_base.verification_agent import verify_answer
+
+
+@app.post("/api/v1/knowledge-base/verify")
+async def verify_against_knowledge_base(
+    project_id: str = Form(...),
+    question: str = Form(...),
+):
+    result = verify_answer(
+        collection_name=project_id,
+        question=question,
+    )
+
+    return {
+        "is_supported": result.is_supported,
+        "best_match_text": result.best_match_text,
+        "best_match_source": result.best_match_source,
+        "similarity_distance": result.similarity_distance,
+        "explanation": result.explanation,
+    }
