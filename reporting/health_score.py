@@ -1,4 +1,4 @@
-﻿from dataclasses import dataclass
+from dataclasses import dataclass
 from typing import Mapping
 
 
@@ -8,6 +8,7 @@ BASE_WEIGHTS = {
     "answer_correctness": 0.20,
     "context_precision": 0.15,
     "context_recall": 0.10,
+    "knowledge_base_support": 0.15,
 }
 
 
@@ -18,7 +19,9 @@ class HealthScoreResult:
     weights_used: dict[str, float]
 
 
-def classify_health_score(score: int) -> str:
+def classify_health_score(
+    score: int,
+) -> str:
     if not 0 <= score <= 100:
         raise ValueError(
             "Health score must be between 0 and 100."
@@ -40,18 +43,21 @@ def classify_health_score(score: int) -> str:
 
 
 def calculate_health_score(
-    metrics: Mapping[str, float | None],
+    metrics: Mapping[
+        str,
+        float | None,
+    ],
 ) -> HealthScoreResult:
     """
-    Calculate the overall reliability score.
+    Calculate overall reliability.
 
-    Only available metrics are included.
-    Their configured weights are re-normalized
-    so missing optional metrics do not count
-    as zero.
+    Optional metrics are included only when available. This keeps
+    projects without an indexed company KB backward compatible.
     """
-
-    available: dict[str, tuple[float, float]] = {}
+    available: dict[
+        str,
+        tuple[float, float],
+    ] = {}
 
     for name, weight in BASE_WEIGHTS.items():
         value = metrics.get(name)
@@ -76,12 +82,14 @@ def calculate_health_score(
 
     total_weight = sum(
         weight
-        for _, weight in available.values()
+        for _, weight
+        in available.values()
     )
 
     weighted_value = sum(
         value * weight
-        for value, weight in available.values()
+        for value, weight
+        in available.values()
     )
 
     normalized_score = (
@@ -104,6 +112,8 @@ def calculate_health_score(
 
     return HealthScoreResult(
         score=score,
-        status=classify_health_score(score),
+        status=classify_health_score(
+            score
+        ),
         weights_used=normalized_weights,
     )

@@ -4,6 +4,8 @@ from app.models.retrieved_context import RetrievedContext
 from app.models.diagnosis import Diagnosis
 from app.models.evaluation_metric import EvaluationMetric
 from app.models.recommendation import RecommendationRecord
+from app.models.knowledge_base_document import KnowledgeBaseDocument
+from app.models.knowledge_base_verification import KnowledgeBaseVerification
 
 __all__ = [
     "Base",
@@ -12,4 +14,6 @@ __all__ = [
     "Diagnosis",
     "EvaluationMetric",
     "RecommendationRecord",
+    "KnowledgeBaseDocument",
+    "KnowledgeBaseVerification",
 ]

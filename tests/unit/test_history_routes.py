@@ -25,4 +25,4 @@ def test_history_detail_route_is_registered() -> None:
 
 
 def test_api_version_is_0_7_0() -> None:
-    assert app.version == "0.7.0"
+    assert app.version == "0.8.0"

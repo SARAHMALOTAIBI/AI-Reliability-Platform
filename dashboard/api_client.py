@@ -276,12 +276,22 @@ def verify_knowledge_base_answer(
     base_url: str,
     project_id: str,
     question: str,
+    answer: str,
+    rag_context: str | None = None,
 ) -> dict[str, Any]:
+    data = {
+        "project_id": project_id,
+        "question": question,
+        "answer": answer,
+    }
+
+    if rag_context and rag_context.strip():
+        data["rag_context"] = (
+            rag_context.strip()
+        )
+
     return request_form(
         base_url,
         "/api/v1/knowledge-base/verify",
-        data={
-            "project_id": project_id,
-            "question": question,
-        },
+        data=data,
     )

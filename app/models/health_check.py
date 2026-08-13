@@ -102,3 +102,11 @@ class HealthCheck(Base):
         back_populates="health_check",
         cascade="all, delete-orphan",
     )
+
+    knowledge_base_verification: Mapped[
+        "KnowledgeBaseVerification"
+    ] = relationship(
+        back_populates="health_check",
+        cascade="all, delete-orphan",
+        uselist=False,
+    )

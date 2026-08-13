@@ -1,4 +1,4 @@
-﻿import uuid
+import uuid
 
 from pydantic import BaseModel, Field
 
@@ -36,6 +36,45 @@ class EvaluationResultResponse(BaseModel):
     )
 
     status: str
+    explanation: str
+
+
+class KnowledgeBaseVerificationResponse(
+    BaseModel
+):
+    status: str
+    evidence_found: bool
+    is_supported: bool | None = None
+    best_match_text: str = ""
+    best_match_source: str = ""
+
+    similarity_distance: float | None = None
+
+    question_relevance_score: (
+        float | None
+    ) = Field(
+        default=None,
+        ge=0,
+        le=1,
+    )
+
+    answer_support_score: (
+        float | None
+    ) = Field(
+        default=None,
+        ge=0,
+        le=1,
+    )
+
+    context_alignment_score: (
+        float | None
+    ) = Field(
+        default=None,
+        ge=0,
+        le=1,
+    )
+
+    numeric_contradiction: bool = False
     explanation: str
 
 
@@ -80,6 +119,11 @@ class HealthCheckResponse(BaseModel):
     answer: str
 
     evaluation: EvaluationResultResponse
+
+    knowledge_base_verification: (
+        KnowledgeBaseVerificationResponse
+        | None
+    ) = None
 
     diagnosis: DiagnosisResponse | None = None
 

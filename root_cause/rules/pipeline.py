@@ -1,30 +1,51 @@
-﻿"""
-Rules Pipeline
-==============
+"""Run deterministic root-cause rules in evidence-aware priority order."""
 
-Runs Layer 1 deterministic root-cause rules
-in priority order.
-"""
+from __future__ import annotations
 
 from typing import Optional
 
 from root_cause.rules.retrieval_rules import (
-    check_retrieval_failure,
     check_generation_hallucination,
     check_knowledge_gap,
     check_prompt_failure,
-    check_verified_knowledge_gap,
+    check_retrieval_failure,
+    check_verified_knowledge_result,
 )
-
 
 
 def run_rules_pipeline(
     metrics: dict,
 ) -> Optional[dict]:
     """
-    Run deterministic diagnosis rules and return
-    the highest-priority diagnosis.
+    Prefer direct company-KB evidence when available, then fall back
+    to proxy metrics from the regular evaluation pipeline.
     """
+    verification_status = metrics.get(
+        "verification_status"
+    )
+
+    if verification_status is not None:
+        verified_diagnosis = (
+            check_verified_knowledge_result(
+                verification_status=(
+                    verification_status
+                ),
+                context_alignment_score=(
+                    metrics.get(
+                        "context_alignment_score"
+                    )
+                ),
+                explanation=(
+                    metrics.get(
+                        "verification_explanation",
+                        "",
+                    )
+                ),
+            )
+        )
+
+        if verified_diagnosis is not None:
+            return verified_diagnosis
 
     context_precision = metrics.get(
         "context_precision"
@@ -37,7 +58,6 @@ def run_rules_pipeline(
     if context_precision is None:
         return None
 
-    # Priority 1 — Retrieval failure
     retrieval_diagnosis = (
         check_retrieval_failure(
             context_precision
@@ -47,7 +67,6 @@ def run_rules_pipeline(
     if retrieval_diagnosis is not None:
         return retrieval_diagnosis
 
-    # Priority 2 — Generation hallucination
     if faithfulness is not None:
         hallucination_diagnosis = (
             check_generation_hallucination(
@@ -61,7 +80,6 @@ def run_rules_pipeline(
         if hallucination_diagnosis is not None:
             return hallucination_diagnosis
 
-    # Priority 3 — Knowledge-base gap
     context_recall = metrics.get(
         "context_recall"
     )
@@ -79,7 +97,6 @@ def run_rules_pipeline(
         if knowledge_gap_diagnosis is not None:
             return knowledge_gap_diagnosis
 
-    # Priority 4 — Prompt failure
     answer_relevancy = metrics.get(
         "answer_relevancy"
     )
@@ -98,18 +115,5 @@ def run_rules_pipeline(
 
         if prompt_failure_diagnosis is not None:
             return prompt_failure_diagnosis
-        
-    # Priority 5: Check verified knowledge base gap (highest confidence,
-    # only used if the Knowledge Base Verification Agent was run)
-    is_supported = metrics.get("is_supported")
-    if is_supported is not None:
-        verified_gap_diagnosis = check_verified_knowledge_gap(
-            is_supported=is_supported,
-            similarity_distance=metrics.get("similarity_distance", 1.0),
-            explanation=metrics.get("verification_explanation", ""),
-        )
-        if verified_gap_diagnosis is not None:
-            return verified_gap_diagnosis
-
 
     return None

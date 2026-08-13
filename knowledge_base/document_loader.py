@@ -1,23 +1,9 @@
-"""
-Document Loader
-================
-Extracts raw text from uploaded documents (currently PDF only).
-"""
+"""Document loading helpers."""
 
-import fitz  # PyMuPDF
+import pymupdf
 
 
 def extract_text_from_pdf(file_path: str) -> str:
-    """
-    Extracts and returns all text content from a PDF file.
-
-    Args:
-        file_path: Path to the PDF file on disk.
-
-    Returns:
-        The full extracted text, with pages joined by newlines.
-    """
-    doc = fitz.open(file_path)
-    pages_text = [page.get_text() for page in doc]
-    doc.close()
-    return "\n".join(pages_text)
+    """Extract text from all PDF pages."""
+    with pymupdf.open(file_path) as document:
+        return "\n".join(page.get_text() for page in document)

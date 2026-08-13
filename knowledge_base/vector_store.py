@@ -1,79 +1,209 @@
-"""
-Vector Store
-============
-Handles embedding and storing document chunks in a local Chroma
-vector database, and querying them by semantic similarity.
-"""
+"""Persistent Chroma vector storage for company knowledge bases."""
+
+from __future__ import annotations
+
+import hashlib
+import os
+from functools import lru_cache
 
 import chromadb
-from chromadb.utils import embedding_functions
+from dotenv import load_dotenv
 
-# Persistent local storage — data survives between runs
-CHROMA_PATH = "./chroma_db"
-
-client = chromadb.PersistentClient(path=CHROMA_PATH)
-
-# Uses a small, free, local embedding model (no API key needed)
-embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"
-)
+from evaluation.generation.embedding_service import get_embedding_model
 
 
-def get_or_create_collection(collection_name: str):
-    """
-    Returns a Chroma collection for a given project/document set,
-    creating it if it doesn't already exist.
-    """
-    return client.get_or_create_collection(
-        name=collection_name,
-        embedding_function=embedding_function,
+load_dotenv()
+
+
+CHROMA_PATH = os.getenv("CHROMA_PATH", "./chroma_db")
+COLLECTION_VERSION = "v2"
+
+
+def collection_name_for_project(project_id: str) -> str:
+    """Return a stable Chroma-safe collection name for a project."""
+    clean_project_id = project_id.strip()
+    if not clean_project_id:
+        raise ValueError("project_id cannot be empty.")
+
+    digest = hashlib.sha256(
+        clean_project_id.encode("utf-8")
+    ).hexdigest()[:24]
+
+    return f"kb_{COLLECTION_VERSION}_{digest}"
+
+
+@lru_cache(maxsize=1)
+def get_client() -> chromadb.PersistentClient:
+    return chromadb.PersistentClient(path=CHROMA_PATH)
+
+
+def get_or_create_collection(project_id: str):
+    return get_client().get_or_create_collection(
+        name=collection_name_for_project(project_id)
     )
 
 
-def add_chunks(collection_name: str, chunks: list[str], source: str) -> None:
-    """
-    Embeds and stores a list of text chunks in the given collection.
+def _embed_texts(texts: list[str]) -> list[list[float]]:
+    if not texts:
+        return []
 
-    Args:
-        collection_name: Name of the Chroma collection (e.g. project id).
-        chunks: List of text chunks to store.
-        source: Name of the source document (e.g. filename), used for
-                traceability of retrieved results.
-    """
-    collection = get_or_create_collection(collection_name)
+    model = get_embedding_model()
+    embeddings = model.encode(
+        texts,
+        normalize_embeddings=True,
+    )
 
-    ids = [f"{source}_chunk_{i}" for i in range(len(chunks))]
-    metadatas = [{"source": source} for _ in chunks]
+    return [
+        vector.tolist()
+        for vector in embeddings
+    ]
 
-    collection.add(
+
+def collection_record_count(project_id: str) -> int:
+    return int(
+        get_or_create_collection(project_id).count()
+    )
+
+
+def add_chunks(
+    project_id: str,
+    chunks: list[str],
+    source: str,
+    document_id: str,
+) -> None:
+    """Embed and upsert document chunks with collision-safe IDs."""
+    clean_chunks = [
+        chunk.strip()
+        for chunk in chunks
+        if chunk and chunk.strip()
+    ]
+
+    if not clean_chunks:
+        return
+
+    collection = get_or_create_collection(project_id)
+    embeddings = _embed_texts(clean_chunks)
+
+    ids = [
+        f"{document_id}_chunk_{index}"
+        for index in range(len(clean_chunks))
+    ]
+
+    metadatas = [
+        {
+            "project_id": project_id,
+            "source": source,
+            "document_id": document_id,
+            "chunk_index": index,
+        }
+        for index in range(len(clean_chunks))
+    ]
+
+    collection.upsert(
         ids=ids,
-        documents=chunks,
+        embeddings=embeddings,
+        documents=clean_chunks,
         metadatas=metadatas,
     )
 
 
-def query_similar_chunks(
-    collection_name: str, query: str, top_k: int = 3
-) -> list[dict]:
-    """
-    Finds the most semantically similar chunks to a query.
+def delete_document(
+    project_id: str,
+    document_id: str,
+) -> None:
+    """Delete all Chroma records belonging to one document."""
+    collection = get_or_create_collection(project_id)
 
-    Returns:
-        A list of dicts, each containing 'text', 'source', and 'distance'.
-    """
-    collection = get_or_create_collection(collection_name)
-
-    results = collection.query(
-        query_texts=[query],
-        n_results=top_k,
+    collection.delete(
+        where={
+            "document_id": document_id,
+        }
     )
 
-    matches = []
-    for i in range(len(results["documents"][0])):
-        matches.append({
-            "text": results["documents"][0][i],
-            "source": results["metadatas"][0][i]["source"],
-            "distance": results["distances"][0][i],
-        })
+
+def query_similar_chunks(
+    project_id: str,
+    query: str,
+    top_k: int = 3,
+) -> list[dict]:
+    """Return nearest company-document chunks for a question."""
+    clean_query = query.strip()
+
+    if not clean_query:
+        raise ValueError("query cannot be empty.")
+
+    collection = get_or_create_collection(project_id)
+    record_count = int(collection.count())
+
+    if record_count == 0:
+        return []
+
+    n_results = min(
+        max(1, int(top_k)),
+        record_count,
+    )
+
+    query_embedding = _embed_texts(
+        [clean_query]
+    )[0]
+
+    results = collection.query(
+        query_embeddings=[
+            query_embedding
+        ],
+        n_results=n_results,
+        include=[
+            "documents",
+            "metadatas",
+            "distances",
+        ],
+    )
+
+    documents = (
+        results.get("documents")
+        or [[]]
+    )[0]
+
+    metadatas = (
+        results.get("metadatas")
+        or [[]]
+    )[0]
+
+    distances = (
+        results.get("distances")
+        or [[]]
+    )[0]
+
+    matches: list[dict] = []
+
+    for index, document in enumerate(documents):
+        metadata = (
+            metadatas[index]
+            if index < len(metadatas)
+            and metadatas[index]
+            else {}
+        )
+
+        distance = (
+            float(distances[index])
+            if index < len(distances)
+            and distances[index] is not None
+            else None
+        )
+
+        matches.append(
+            {
+                "text": document or "",
+                "source": metadata.get(
+                    "source",
+                    "",
+                ),
+                "document_id": metadata.get(
+                    "document_id",
+                    "",
+                ),
+                "distance": distance,
+            }
+        )
 
     return matches

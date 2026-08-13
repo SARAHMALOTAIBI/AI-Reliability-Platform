@@ -19,6 +19,7 @@ from i18n import (
     localize_action,
     localize_diagnosis_explanation,
     localize_evaluation_explanation,
+    localize_kb_explanation,
     localize_value,
     tr,
 )
@@ -309,6 +310,82 @@ def render_evaluation(
                         "explanation"
                     ]
                 )
+
+
+
+def render_knowledge_base_verification(
+    verification: dict | None,
+    lang: str,
+) -> None:
+    st.subheader(tr(lang, "knowledge_base_verification"))
+
+    if not verification:
+        st.info(tr(lang, "no_kb_verification"))
+        return
+
+    status = verification.get("status")
+    status_label = localize_value(status, lang)
+
+    message_map = {
+        "SUPPORTED": "supported_message",
+        "CONTRADICTED": "contradicted_message",
+        "UNSUPPORTED": "unsupported_message",
+        "NO_RELEVANT_EVIDENCE": "no_relevant_evidence_message",
+        "NOT_AVAILABLE": "kb_not_available_message",
+    }
+    message = tr(lang, message_map.get(status, "kb_verification_status"))
+
+    if status == "SUPPORTED":
+        st.success(message)
+    elif status in {"CONTRADICTED", "UNSUPPORTED"}:
+        st.error(message)
+    elif status == "NO_RELEVANT_EVIDENCE":
+        st.warning(message)
+    else:
+        st.info(message)
+
+    st.write(f"**{tr(lang, 'kb_verification_status')}:** `{status_label}`")
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric(
+        tr(lang, "answer_support"),
+        percent(verification.get("answer_support_score"), lang),
+        border=True,
+    )
+    col2.metric(
+        tr(lang, "question_relevance"),
+        percent(verification.get("question_relevance_score"), lang),
+        border=True,
+    )
+    col3.metric(
+        tr(lang, "context_alignment"),
+        percent(verification.get("context_alignment_score"), lang),
+        border=True,
+    )
+
+    evidence_found = verification.get("evidence_found", False)
+    st.write(
+        f"**{tr(lang, 'evidence_found')}:** "
+        f"{tr(lang, 'yes') if evidence_found else tr(lang, 'no')}"
+    )
+
+    source = verification.get("best_match_source")
+    if source:
+        st.write(f"**{tr(lang, 'source')}:** {source}")
+
+    distance = verification.get("similarity_distance")
+    if distance is not None:
+        st.write(f"**{tr(lang, 'similarity_distance')}:** {distance:.4f}")
+
+    explanation = localize_kb_explanation(verification, lang)
+    if explanation:
+        st.write(f"**{tr(lang, 'explanation')}:**")
+        st.write(explanation)
+
+    best_text = verification.get("best_match_text")
+    if best_text:
+        with st.expander(tr(lang, "best_matching_text")):
+            st.write(best_text)
 
 
 def render_diagnosis(
@@ -678,6 +755,13 @@ def render_health_check_detail(
         lang,
     )
 
+    render_knowledge_base_verification(
+        detail.get(
+            "knowledge_base_verification"
+        ),
+        lang,
+    )
+
     render_diagnosis(
         diagnosis,
         evaluation,
@@ -851,7 +935,7 @@ overview_tab, run_tab, history_tab, kb_tab = (
             tr(lang, "overview"),
             tr(lang, "run_check"),
             tr(lang, "history"),
-            "Knowledge Base",
+            tr(lang, "knowledge_base"),
         ]
     )
 )
@@ -1055,14 +1139,9 @@ with overview_tab:
 
     elif len(evaluated_items) == 1:
         st.info(
-            (
-                "At least two evaluated health checks "
-                "are needed to display the trend."
-            )
-            if lang == "en"
-            else (
-                "????? ??? ????? ???????? ??? ????? "
-                "???? ????? ???? ?????."
+            tr(
+                lang,
+                "trend_needs_two",
             )
         )
 
@@ -1092,10 +1171,9 @@ with overview_tab:
                 is None
             )
 
-            legacy_label = (
-                "Legacy Check"
-                if lang == "en"
-                else "??? ????"
+            legacy_label = tr(
+                lang,
+                "legacy_check",
             )
 
             table_rows.append(
@@ -1121,7 +1199,7 @@ with overview_tab:
                         lang,
                         "score",
                     ): (
-                        "?"
+                        "-"
                         if is_legacy
                         else item.get(
                             "overall_health_score"
@@ -1607,120 +1685,105 @@ with history_tab:
 # ============================================================
 
 with kb_tab:
-    st.header("Knowledge Base")
-    st.caption(
-        "Upload company documents and verify RAG answers "
-        "against them independently."
-    )
+    st.header(tr(lang, "knowledge_base"))
+    st.caption(tr(lang, "kb_caption"))
 
-    st.subheader("Upload Document")
+    st.subheader(tr(lang, "upload_document"))
 
     with st.form("kb_upload_form"):
         kb_project_id = st.text_input(
-            "Project ID",
+            tr(lang, "project_id"),
             value="customer-support-rag",
             key="kb_upload_project_id",
         )
-
         uploaded_file = st.file_uploader(
-            "Choose a PDF file",
+            tr(lang, "choose_pdf"),
             type=["pdf"],
         )
-
         upload_submitted = st.form_submit_button(
-            "Upload & Index",
+            tr(lang, "upload_index"),
             use_container_width=True,
             type="primary",
         )
 
     if upload_submitted:
         if not kb_project_id.strip():
-            st.error("Project ID is required.")
+            st.error(tr(lang, "project_required"))
         elif uploaded_file is None:
-            st.error("Please choose a file to upload.")
+            st.error(tr(lang, "choose_file_required"))
         else:
             try:
-                with st.spinner("Uploading and indexing..."):
-                    file_bytes = uploaded_file.read()
+                with st.spinner(tr(lang, "uploading_indexing")):
                     result = upload_knowledge_base_document(
                         api_url,
                         project_id=kb_project_id.strip(),
-                        file_bytes=file_bytes,
+                        file_bytes=uploaded_file.read(),
                         filename=uploaded_file.name,
                     )
 
                 if result.get("success"):
-                    st.success(result.get("message", "Indexed successfully."))
+                    if result.get("duplicate"):
+                        st.info(tr(lang, "duplicate_document"))
+                    else:
+                        st.success(tr(lang, "indexed_successfully"))
+                    st.metric(
+                        tr(lang, "chunks_indexed"),
+                        result.get("chunks_indexed", 0),
+                        border=True,
+                    )
                 else:
-                    st.warning(result.get("message", "Indexing failed."))
-
+                    st.warning(tr(lang, "indexing_failed"))
             except APIClientError as exc:
                 st.error(str(exc))
 
     st.divider()
-
-    st.subheader("Verify an Answer")
-    st.caption(
-        "Check whether a question is actually supported by the "
-        "indexed documents for this project."
-    )
+    st.subheader(tr(lang, "verify_answer"))
+    st.caption(tr(lang, "kb_verify_caption"))
 
     with st.form("kb_verify_form"):
         verify_project_id = st.text_input(
-            "Project ID",
+            tr(lang, "project_id"),
             value="customer-support-rag",
             key="kb_verify_project_id",
         )
-
         verify_question = st.text_area(
-            "Question",
+            tr(lang, "question"),
             value="What is the refund period?",
             height=90,
         )
-
+        verify_answer_text = st.text_area(
+            tr(lang, "verification_answer"),
+            value="Customers can request a refund within 30 days.",
+            height=100,
+        )
+        verify_rag_context = st.text_area(
+            tr(lang, "rag_context_optional"),
+            value="Customers may request a refund within 14 days.",
+            height=120,
+        )
         verify_submitted = st.form_submit_button(
-            "Verify",
+            tr(lang, "verify"),
             use_container_width=True,
             type="primary",
         )
 
     if verify_submitted:
         if not verify_project_id.strip():
-            st.error("Project ID is required.")
+            st.error(tr(lang, "project_required"))
         elif not verify_question.strip():
-            st.error("Question is required.")
+            st.error(tr(lang, "question_required"))
+        elif not verify_answer_text.strip():
+            st.error(tr(lang, "answer_required"))
         else:
             try:
-                with st.spinner("Searching knowledge base..."):
+                with st.spinner(tr(lang, "searching_kb")):
                     result = verify_knowledge_base_answer(
                         api_url,
                         project_id=verify_project_id.strip(),
                         question=verify_question.strip(),
+                        answer=verify_answer_text.strip(),
+                        rag_context=verify_rag_context.strip() or None,
                     )
-
-                is_supported = result.get("is_supported")
-
-                if is_supported:
-                    st.success("✅ Supported by the knowledge base")
-                else:
-                    st.error("❌ Not supported — no relevant information found")
-
-                col1, col2 = st.columns(2)
-                col1.metric(
-                    "Similarity Distance",
-                    f"{result.get('similarity_distance', 0):.4f}",
-                    border=True,
-                )
-                col2.metric(
-                    "Source",
-                    result.get("best_match_source", "N/A"),
-                    border=True,
-                )
-
-                st.write(f"**Explanation:** {result.get('explanation', '')}")
-
-                with st.expander("Best Matching Text"):
-                    st.write(result.get("best_match_text", ""))
-
+                render_knowledge_base_verification(result, lang)
             except APIClientError as exc:
                 st.error(str(exc))

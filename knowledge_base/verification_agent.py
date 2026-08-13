@@ -1,90 +1,287 @@
-"""
-Verification Agent
-===================
-Checks whether a RAG-generated answer is actually supported by the
-company's real indexed documents (not just the context the RAG
-application claimed to retrieve).
-"""
+"""Independent verification against indexed company documents."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 
-from knowledge_base.vector_store import query_similar_chunks
+from evaluation.generation.embedding_service import semantic_similarity
+from evaluation.evaluators.numeric import NumericConsistencyEvaluator
+from knowledge_base.vector_store import (
+    collection_record_count,
+    query_similar_chunks,
+)
+
+
+QUESTION_RELEVANCE_THRESHOLD = 0.50
+ANSWER_SUPPORT_THRESHOLD = 0.60
+CONTEXT_ALIGNMENT_THRESHOLD = 0.55
 
 
 @dataclass(frozen=True)
 class VerificationResult:
-    is_supported: bool
+    status: str
+    evidence_found: bool
+    is_supported: bool | None
     best_match_text: str
     best_match_source: str
-    similarity_distance: float
+    similarity_distance: float | None
+    question_relevance_score: float | None
+    answer_support_score: float | None
+    context_alignment_score: float | None
+    numeric_contradiction: bool
     explanation: str
 
+    @property
+    def health_score_component(
+        self,
+    ) -> float | None:
+        """Optional 0..1 score for the overall health calculation."""
+        if self.status == "NOT_AVAILABLE":
+            return None
 
-# Below this distance, we consider the match "relevant enough"
-RELEVANCE_THRESHOLD = 0.8
+        if self.status == "NO_RELEVANT_EVIDENCE":
+            return 0.0
+
+        if self.status == "SUPPORTED":
+            return 1.0
+
+        if self.numeric_contradiction:
+            return 0.0
+
+        return self.answer_support_score
 
 
 def verify_answer(
-    collection_name: str,
+    project_id: str,
     question: str,
+    answer: str,
+    rag_contexts: list[str] | None = None,
     top_k: int = 3,
 ) -> VerificationResult:
     """
-    Searches the real knowledge base for the question and reports
-    whether relevant supporting information actually exists.
+    Verify a RAG answer against independently indexed company documents.
 
-    This does NOT check the RAG app's own retrieved context — it
-    independently verifies against the company's real documents.
+    Retrieval is driven by the question. The generated answer is then
+    compared with the best company evidence. The RAG application's own
+    contexts are compared separately to the company evidence so root-cause
+    analysis can distinguish retrieval failure from generation failure.
 
-    Args:
-        collection_name: The project's document collection to search.
-        question: The original user question.
-        top_k: How many candidate matches to consider.
-
-    Returns:
-        A VerificationResult describing whether supporting evidence
-        was found in the real knowledge base.
+    Scores are semantic proxies, not logical entailment probabilities.
+    Numeric duration contradictions receive an explicit hard check.
     """
+    clean_question = question.strip()
+    clean_answer = answer.strip()
+
+    if not clean_question:
+        raise ValueError(
+            "question cannot be empty."
+        )
+
+    if not clean_answer:
+        raise ValueError(
+            "answer cannot be empty."
+        )
+
+    if collection_record_count(
+        project_id
+    ) == 0:
+        return VerificationResult(
+            status="NOT_AVAILABLE",
+            evidence_found=False,
+            is_supported=None,
+            best_match_text="",
+            best_match_source="",
+            similarity_distance=None,
+            question_relevance_score=None,
+            answer_support_score=None,
+            context_alignment_score=None,
+            numeric_contradiction=False,
+            explanation=(
+                "No indexed company documents "
+                "are available for this project."
+            ),
+        )
+
     matches = query_similar_chunks(
-        collection_name=collection_name,
-        query=question,
+        project_id=project_id,
+        query=clean_question,
         top_k=top_k,
     )
 
     if not matches:
         return VerificationResult(
-            is_supported=False,
+            status="NO_RELEVANT_EVIDENCE",
+            evidence_found=False,
+            is_supported=None,
             best_match_text="",
             best_match_source="",
-            similarity_distance=1.0,
+            similarity_distance=None,
+            question_relevance_score=0.0,
+            answer_support_score=None,
+            context_alignment_score=None,
+            numeric_contradiction=False,
             explanation=(
-                "No documents found in the knowledge base for this "
-                "project. The knowledge base may be empty or not yet "
-                "indexed."
+                "The project contains indexed documents, "
+                "but no candidate evidence was retrieved."
             ),
         )
 
-    best_match = matches[0]
-    is_supported = best_match["distance"] <= RELEVANCE_THRESHOLD
+    ranked_matches = []
 
-    if is_supported:
-        explanation = (
-            f"Found supporting information in '{best_match['source']}' "
-            f"with similarity distance {best_match['distance']:.4f}."
+    for match in matches:
+        evidence_text = (
+            match.get("text")
+            or ""
         )
-    else:
+
+        relevance = semantic_similarity(
+            clean_question,
+            evidence_text,
+        )
+
+        ranked_matches.append(
+            (
+                relevance,
+                match,
+            )
+        )
+
+    ranked_matches.sort(
+        key=lambda item: item[0],
+        reverse=True,
+    )
+
+    question_relevance, best_match = (
+        ranked_matches[0]
+    )
+
+    best_text = (
+        best_match.get("text")
+        or ""
+    )
+
+    best_source = (
+        best_match.get("source")
+        or ""
+    )
+
+    distance = best_match.get(
+        "distance"
+    )
+
+    if (
+        question_relevance
+        < QUESTION_RELEVANCE_THRESHOLD
+    ):
+        return VerificationResult(
+            status="NO_RELEVANT_EVIDENCE",
+            evidence_found=False,
+            is_supported=None,
+            best_match_text=best_text,
+            best_match_source=best_source,
+            similarity_distance=distance,
+            question_relevance_score=round(
+                question_relevance,
+                4,
+            ),
+            answer_support_score=None,
+            context_alignment_score=None,
+            numeric_contradiction=False,
+            explanation=(
+                "Indexed company documents exist, "
+                "but the closest evidence is not "
+                "sufficiently relevant to the question "
+                f"(semantic relevance "
+                f"{question_relevance:.2f})."
+            ),
+        )
+
+    answer_support = semantic_similarity(
+        clean_answer,
+        best_text,
+    )
+
+    numeric_result = (
+        NumericConsistencyEvaluator().evaluate(
+            answer=clean_answer,
+            evidence=best_text,
+        )
+    )
+
+    clean_contexts = [
+        context.strip()
+        for context in (
+            rag_contexts
+            or []
+        )
+        if context and context.strip()
+    ]
+
+    context_alignment = (
+        max(
+            semantic_similarity(
+                context,
+                best_text,
+            )
+            for context in clean_contexts
+        )
+        if clean_contexts
+        else 0.0
+    )
+
+    is_supported = (
+        answer_support
+        >= ANSWER_SUPPORT_THRESHOLD
+        and not numeric_result.contradiction
+    )
+
+    if numeric_result.contradiction:
+        status = "CONTRADICTED"
         explanation = (
-            f"No sufficiently relevant information found in the "
-            f"knowledge base (closest match distance: "
-            f"{best_match['distance']:.4f}, threshold: "
-            f"{RELEVANCE_THRESHOLD}). This suggests the knowledge base "
-            f"may be missing information needed to answer this question."
+            "Company evidence was found, but the generated "
+            "answer contains a numeric contradiction against "
+            "that evidence. "
+            f"{numeric_result.explanation}"
+        )
+
+    elif is_supported:
+        status = "SUPPORTED"
+        explanation = (
+            "The generated answer is semantically supported "
+            "by independently retrieved company evidence "
+            f"(answer support {answer_support:.2f})."
+        )
+
+    else:
+        status = "UNSUPPORTED"
+        explanation = (
+            "Relevant company evidence was found, but the "
+            "generated answer is not sufficiently aligned "
+            f"with it (answer support "
+            f"{answer_support:.2f})."
         )
 
     return VerificationResult(
+        status=status,
+        evidence_found=True,
         is_supported=is_supported,
-        best_match_text=best_match["text"],
-        best_match_source=best_match["source"],
-        similarity_distance=best_match["distance"],
+        best_match_text=best_text,
+        best_match_source=best_source,
+        similarity_distance=distance,
+        question_relevance_score=round(
+            question_relevance,
+            4,
+        ),
+        answer_support_score=round(
+            answer_support,
+            4,
+        ),
+        context_alignment_score=round(
+            context_alignment,
+            4,
+        ),
+        numeric_contradiction=(
+            numeric_result.contradiction
+        ),
         explanation=explanation,
     )

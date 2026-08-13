@@ -545,3 +545,158 @@ def localize_diagnosis_explanation(
         )
 
     return original
+
+# === PHASE_B_KB_I18N_BEGIN ===
+TEXT["en"].update({
+    "knowledge_base": "Knowledge Base",
+    "knowledge_base_verification": "Knowledge Base Verification",
+    "kb_caption": "Upload company documents and verify RAG answers independently against company evidence.",
+    "upload_document": "Upload Document",
+    "choose_pdf": "Choose a PDF file",
+    "upload_index": "Upload & Index",
+    "uploading_indexing": "Uploading and indexing...",
+    "indexed_successfully": "Document indexed successfully.",
+    "duplicate_document": "This document is already indexed for this project.",
+    "indexing_failed": "Indexing could not be completed.",
+    "choose_file_required": "Please choose a PDF file.",
+    "chunks_indexed": "Chunks Indexed",
+    "verify_answer": "Verify a RAG Answer",
+    "kb_verify_caption": "Compare the generated RAG answer with independently retrieved company evidence.",
+    "verification_answer": "RAG Answer to Verify",
+    "rag_context_optional": "Retrieved RAG Context (optional)",
+    "verify": "Verify",
+    "searching_kb": "Searching the company knowledge base...",
+    "kb_verification_status": "Verification Status",
+    "evidence_found": "Evidence Found",
+    "answer_support": "Answer Support",
+    "question_relevance": "Question Relevance",
+    "context_alignment": "RAG Context Alignment",
+    "similarity_distance": "Similarity Distance",
+    "source": "Source",
+    "explanation": "Explanation",
+    "best_matching_text": "Best Matching Company Evidence",
+    "yes": "Yes",
+    "no": "No",
+    "supported_message": "The RAG answer is supported by company evidence.",
+    "contradicted_message": "The RAG answer contradicts company evidence.",
+    "unsupported_message": "Relevant company evidence exists, but it does not sufficiently support the RAG answer.",
+    "no_relevant_evidence_message": "No sufficiently relevant company evidence was found for this question.",
+    "kb_not_available_message": "No indexed company documents are available for this project.",
+    "no_kb_verification": "No independent knowledge-base verification is stored for this health check.",
+    "legacy_check": "Legacy Check",
+    "trend_needs_two": "At least two evaluated health checks are needed to display the trend.",
+})
+
+TEXT["ar"].update({
+    "knowledge_base": "قاعدة المعرفة",
+    "knowledge_base_verification": "التحقق من قاعدة المعرفة",
+    "kb_caption": "ارفع مستندات الشركة وتحقق من إجابات RAG بشكل مستقل بالاعتماد على أدلة الشركة.",
+    "upload_document": "رفع مستند",
+    "choose_pdf": "اختر ملف PDF",
+    "upload_index": "رفع وفهرسة",
+    "uploading_indexing": "جارٍ رفع الملف وفهرسته...",
+    "indexed_successfully": "تمت فهرسة المستند بنجاح.",
+    "duplicate_document": "هذا المستند مفهرس مسبقًا لهذا المشروع.",
+    "indexing_failed": "تعذر إكمال فهرسة المستند.",
+    "choose_file_required": "اختر ملف PDF للرفع.",
+    "chunks_indexed": "عدد المقاطع المفهرسة",
+    "verify_answer": "التحقق من إجابة RAG",
+    "kb_verify_caption": "قارن إجابة RAG المولّدة بشكل مستقل مع الأدلة المسترجعة من مستندات الشركة.",
+    "verification_answer": "إجابة RAG المراد التحقق منها",
+    "rag_context_optional": "سياق RAG المسترجع (اختياري)",
+    "verify": "تحقق",
+    "searching_kb": "جارٍ البحث في قاعدة معرفة الشركة...",
+    "kb_verification_status": "حالة التحقق",
+    "evidence_found": "تم العثور على دليل",
+    "answer_support": "مدى دعم الدليل للإجابة",
+    "question_relevance": "ارتباط الدليل بالسؤال",
+    "context_alignment": "توافق سياق RAG مع دليل الشركة",
+    "similarity_distance": "مسافة التشابه",
+    "source": "المصدر",
+    "explanation": "التفسير",
+    "best_matching_text": "أفضل دليل مطابق من مستندات الشركة",
+    "yes": "نعم",
+    "no": "لا",
+    "supported_message": "إجابة RAG مدعومة بأدلة الشركة.",
+    "contradicted_message": "إجابة RAG تتعارض مع أدلة الشركة.",
+    "unsupported_message": "يوجد دليل مرتبط في مستندات الشركة، لكنه لا يدعم إجابة RAG بشكل كافٍ.",
+    "no_relevant_evidence_message": "لم يتم العثور على دليل من مستندات الشركة مرتبط بالسؤال بدرجة كافية.",
+    "kb_not_available_message": "لا توجد مستندات شركة مفهرسة لهذا المشروع.",
+    "no_kb_verification": "لا توجد نتيجة تحقق مستقلة من قاعدة المعرفة محفوظة لهذا الفحص.",
+    "legacy_check": "فحص قديم",
+    "trend_needs_two": "نحتاج إلى فحصين مُقيّمين على الأقل لعرض اتجاه درجة الصحة.",
+})
+
+VALUE_LABELS_AR.update({
+    "NOT_AVAILABLE": "غير متاحة",
+    "NO_RELEVANT_EVIDENCE": "لا يوجد دليل ذو صلة",
+    "SUPPORTED": "مدعوم",
+    "UNSUPPORTED": "غير مدعوم",
+    "CONTRADICTED": "متعارض",
+    "VERIFIED_MISSING_INFORMATION": "نقص معلومات تم التحقق منه",
+    "VERIFIED_MISSED_EVIDENCE": "فشل في استرجاع دليل موجود",
+    "VERIFIED_UNSUPPORTED_ANSWER": "إجابة غير مدعومة بعد التحقق",
+})
+
+_original_localize_diagnosis_explanation_phase_b = localize_diagnosis_explanation
+
+
+def localize_diagnosis_explanation(
+    diagnosis: dict | None,
+    evaluation: dict | None,
+    lang: str,
+) -> str:
+    if diagnosis and lang == "ar":
+        subcategory = diagnosis.get("subcategory")
+
+        if subcategory == "VERIFIED_MISSING_INFORMATION":
+            return (
+                "تم التحقق بشكل مستقل من مستندات الشركة، ولم يتم العثور على "
+                "دليل مرتبط بالسؤال بدرجة كافية. يشير ذلك إلى نقص محتمل في قاعدة المعرفة."
+            )
+
+        if subcategory == "VERIFIED_MISSED_EVIDENCE":
+            return (
+                "تم العثور على دليل مناسب داخل مستندات الشركة، لكن سياق RAG "
+                "المسترجع لم يتوافق معه بدرجة كافية. يشير ذلك إلى فشل في مرحلة الاسترجاع."
+            )
+
+        if subcategory == "VERIFIED_UNSUPPORTED_ANSWER":
+            return (
+                "سياق RAG يتوافق مع الدليل المستقل من مستندات الشركة، لكن الإجابة "
+                "المولّدة غير مدعومة بهذا الدليل. يشير ذلك إلى فشل في مرحلة التوليد."
+            )
+
+    return _original_localize_diagnosis_explanation_phase_b(
+        diagnosis,
+        evaluation,
+        lang,
+    )
+
+
+def localize_kb_explanation(
+    verification: dict | None,
+    lang: str,
+) -> str:
+    if not verification:
+        return ""
+
+    original = verification.get("explanation", "")
+    if lang != "ar":
+        return original
+
+    status = verification.get("status")
+
+    if status == "NOT_AVAILABLE":
+        return "لا توجد مستندات شركة مفهرسة لهذا المشروع، لذلك لم يتم تطبيق تحقق مستقل على الإجابة."
+    if status == "NO_RELEVANT_EVIDENCE":
+        return "توجد مستندات مفهرسة للمشروع، لكن لم يتم العثور على دليل مرتبط بالسؤال بدرجة كافية."
+    if status == "SUPPORTED":
+        return "تم العثور على دليل مستقل من مستندات الشركة، والإجابة المولّدة متوافقة معه دلاليًا ولا تحتوي على تعارض رقمي مكتشف."
+    if status == "CONTRADICTED":
+        return "تم العثور على دليل مستقل من مستندات الشركة، لكن الإجابة المولّدة تحتوي على تعارض رقمي مع هذا الدليل."
+    if status == "UNSUPPORTED":
+        return "تم العثور على دليل مرتبط بالسؤال داخل مستندات الشركة، لكن الإجابة المولّدة لا تتوافق معه بدرجة كافية."
+
+    return original
+# === PHASE_B_KB_I18N_END ===

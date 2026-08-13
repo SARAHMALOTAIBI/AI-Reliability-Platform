@@ -19,6 +19,7 @@ from app.models import HealthCheck
 from app.schemas.evaluation_result import (
     DiagnosisResponse,
     EvaluationResultResponse,
+    KnowledgeBaseVerificationResponse,
     RecommendationResponse,
 )
 from app.schemas.history import (
@@ -58,6 +59,51 @@ def build_evaluation_response(
         hallucination_risk=metric.hallucination_risk,
         status=metric.evaluation_status,
         explanation=metric.explanation,
+    )
+
+
+def build_knowledge_base_verification_response(
+    health_check: HealthCheck,
+) -> KnowledgeBaseVerificationResponse | None:
+    verification = (
+        health_check.knowledge_base_verification
+    )
+
+    if verification is None:
+        return None
+
+    return KnowledgeBaseVerificationResponse(
+        status=verification.status,
+        evidence_found=(
+            verification.evidence_found
+        ),
+        is_supported=(
+            verification.is_supported
+        ),
+        best_match_text=(
+            verification.best_match_text
+            or ""
+        ),
+        best_match_source=(
+            verification.best_match_source
+            or ""
+        ),
+        similarity_distance=(
+            verification.similarity_distance
+        ),
+        question_relevance_score=(
+            verification.question_relevance_score
+        ),
+        answer_support_score=(
+            verification.answer_support_score
+        ),
+        context_alignment_score=(
+            verification.context_alignment_score
+        ),
+        numeric_contradiction=(
+            verification.numeric_contradiction
+        ),
+        explanation=verification.explanation,
     )
 
 
@@ -130,8 +176,6 @@ def build_context_responses(
     ]
 
 
-
-
 @router.get(
     "",
     response_model=HealthCheckHistoryResponse,
@@ -181,6 +225,9 @@ def list_health_checks(
             selectinload(
                 HealthCheck.diagnoses
             ),
+            selectinload(
+                HealthCheck.knowledge_base_verification
+            ),
         )
         .order_by(
             HealthCheck.created_at.desc()
@@ -204,6 +251,9 @@ def list_health_checks(
 
     for health_check in health_checks:
         metric = health_check.evaluation_metric
+        verification = (
+            health_check.knowledge_base_verification
+        )
 
         diagnosis_category = None
 
@@ -244,6 +294,11 @@ def list_health_checks(
                 diagnosis_category=(
                     diagnosis_category
                 ),
+                knowledge_base_status=(
+                    verification.status
+                    if verification
+                    else None
+                ),
                 created_at=health_check.created_at,
             )
         )
@@ -278,6 +333,9 @@ def get_health_check(
             ),
             selectinload(
                 HealthCheck.recommendations
+            ),
+            selectinload(
+                HealthCheck.knowledge_base_verification
             ),
         )
         .where(
@@ -327,6 +385,11 @@ def get_health_check(
         performance=health_check.performance,
         evaluation=build_evaluation_response(
             health_check
+        ),
+        knowledge_base_verification=(
+            build_knowledge_base_verification_response(
+                health_check
+            )
         ),
         diagnosis=build_diagnosis_response(
             health_check

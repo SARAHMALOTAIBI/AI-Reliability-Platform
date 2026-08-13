@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from app.schemas.evaluation_result import (
     DiagnosisResponse,
     EvaluationResultResponse,
+    KnowledgeBaseVerificationResponse,
     RecommendationResponse,
 )
 
@@ -39,6 +40,7 @@ class HealthCheckHistoryItem(BaseModel):
     health_status: str | None = None
     evaluation_status: str | None = None
     diagnosis_category: str | None = None
+    knowledge_base_status: str | None = None
 
     created_at: datetime
 
@@ -86,6 +88,10 @@ class HealthCheckDetailResponse(BaseModel):
     performance: dict | None = None
 
     evaluation: EvaluationResultResponse | None = None
+    knowledge_base_verification: (
+        KnowledgeBaseVerificationResponse
+        | None
+    ) = None
     diagnosis: DiagnosisResponse | None = None
 
     contexts: list[RetrievedContextResponse] = Field(
