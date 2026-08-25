@@ -49,10 +49,8 @@ def _group_key(sample: ValidationSample) -> str:
     split. Samples sharing a source_fact_id represent the same
     underlying fact/case and must never be separated across
     development and held-out — REGARDLESS of which gold_label they
-    have (a fact can appear as HEALTHY in one sample and
-    GENERATION_FAILURE in another; both must land on the same side).
-    Samples without a source_fact_id fall back to their own sample_id,
-    i.e. they form a single-sample group."""
+    have. Samples without a source_fact_id fall back to their own
+    sample_id, i.e. they form a single-sample group."""
     if sample.source_fact_id:
         return f"fact::{sample.source_fact_id}"
     return f"sample::{sample.sample_id}"
@@ -144,57 +142,113 @@ def split_development_and_held_out(
         total_count - 1,
     )
 
-    development: list[ValidationSample] = []
-    held_out: list[ValidationSample] = []
+    # side_of[group_key] = "dev" or "held"
+    side_of: dict[str, str] = {}
     dev_count = 0
 
     for group_key in sorted_group_keys:
         group_samples = groups[group_key]
-
         if dev_count < global_target_dev_count:
-            for sample in group_samples:
-                development.append(
-                    replace(
-                        sample,
-                        split=ValidationSplit.DEVELOPMENT,
-                    )
-                )
+            side_of[group_key] = "dev"
             dev_count += len(group_samples)
         else:
-            for sample in group_samples:
-                held_out.append(
-                    replace(
-                        sample,
-                        split=ValidationSplit.HELD_OUT,
-                    )
-                )
+            side_of[group_key] = "held"
 
-    # Verify every label ended up represented on BOTH sides.
-    dev_labels = {s.gold_label for s in development}
-    held_labels = {s.gold_label for s in held_out}
+    def _label_coverage() -> tuple[set, set]:
+        dev_labels_ = set()
+        held_labels_ = set()
+        for gkey, gsamples in groups.items():
+            target = dev_labels_ if side_of[gkey] == "dev" else held_labels_
+            for s in gsamples:
+                target.add(s.gold_label)
+        return dev_labels_, held_labels_
 
-    labels_missing_dev = [
-        label.value
-        for label in FailureLabel
-        if label not in dev_labels
-    ]
-    labels_missing_held = [
-        label.value
-        for label in FailureLabel
-        if label not in held_labels
-    ]
+    # --- Repair pass ---------------------------------------------------
+    # If any label ended up missing from one side entirely, try to move
+    # a WHOLE group (never split it) from the over-represented side to
+    # the deficient one — but only if doing so doesn't remove coverage
+    # of any OTHER label from the side it's leaving.
+    unresolved: list[str] = []
 
-    if labels_missing_dev or labels_missing_held:
+    for label in FailureLabel:
+        dev_labels, held_labels = _label_coverage()
+
+        needs_dev = label not in dev_labels
+        needs_held = label not in held_labels
+
+        if not needs_dev and not needs_held:
+            continue
+
+        target_side = "dev" if needs_dev else "held"
+        source_side = "held" if needs_dev else "dev"
+
+        candidates = [
+            gkey
+            for gkey in sorted_group_keys
+            if side_of[gkey] == source_side
+            and any(s.gold_label == label for s in groups[gkey])
+        ]
+
+        fixed = False
+        for candidate in candidates:
+            original_side = side_of[candidate]
+            side_of[candidate] = target_side
+
+            dev_labels_after, held_labels_after = _label_coverage()
+            still_ok = (
+                len(dev_labels_after) == len(FailureLabel)
+                if target_side == "dev" or source_side == "dev"
+                else True
+            )
+            # Verify BOTH sides still have every already-satisfied
+            # label covered after this move (no new gaps introduced).
+            all_labels = set(FailureLabel)
+            new_dev_missing = all_labels - dev_labels_after
+            new_held_missing = all_labels - held_labels_after
+
+            # Only accept if this move doesn't create OTHER new gaps
+            # beyond the one we're actively trying to fix.
+            other_new_gaps = (
+                (new_dev_missing - {label}) if target_side != "dev" else set()
+            ) | (
+                (new_held_missing - {label}) if target_side != "held" else set()
+            )
+
+            if label not in (new_dev_missing | new_held_missing) and not other_new_gaps:
+                fixed = True
+                break
+            else:
+                side_of[candidate] = original_side  # revert
+
+        if not fixed:
+            unresolved.append(label.value)
+
+    if unresolved:
         raise ValueError(
-            "Cross-label group-aware split could not represent every "
-            "label on both sides. Missing from development: "
-            + ", ".join(labels_missing_dev or ["(none)"])
-            + " | Missing from held-out: "
-            + ", ".join(labels_missing_held or ["(none)"])
-            + ". This usually means source_fact_id groups are too "
-            "coarse (e.g. too many samples sharing one group id) — "
-            "consider more granular grouping."
+            "Group-aware split could not represent every label on "
+            "both sides even after repair attempts. Labels still "
+            "missing from one side: " + ", ".join(sorted(set(unresolved)))
+            + ". This usually means a label's samples are all bundled "
+            "into source_fact_id groups shared with other labels, "
+            "leaving no movable group to fix coverage — consider more "
+            "granular source_fact_id grouping."
         )
+
+    # --- Build final development/held_out lists -------------------------
+    development: list[ValidationSample] = []
+    held_out: list[ValidationSample] = []
+
+    for gkey, gsamples in groups.items():
+        if side_of[gkey] == "dev":
+            for sample in gsamples:
+                development.append(
+                    replace(sample, split=ValidationSplit.DEVELOPMENT)
+                )
+        else:
+            for sample in gsamples:
+                held_out.append(
+                    replace(sample, split=ValidationSplit.HELD_OUT)
+                )
 
     development.sort(
         key=lambda sample: sample.sample_id
@@ -258,7 +312,6 @@ def validate_no_split_leakage(
             "the held_out split."
         )
 
-    # Group-leakage check: no source_fact_id may appear on both sides.
     development_facts = {
         sample.source_fact_id
         for sample in development

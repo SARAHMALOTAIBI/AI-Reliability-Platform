@@ -206,7 +206,7 @@
     "language": "en",
     "domain": "it_support",
     "question": "How long is a password reset link valid?",
-    "answer": "The context does not specify how long a password reset link is valid.",
+    "answer": "The provided context does not specify the validity period of a password reset link.",
     "contexts": [
       "Email account lockouts are lifted automatically after 20 minutes.",
       "يتم رفع قفل حساب البريد الإلكتروني تلقائيًا بعد 20 دقيقة.",
@@ -228,7 +228,7 @@
     "language": "ar",
     "domain": "it_support",
     "question": "ما المطلوب للوصول إلى VPN؟",
-    "answer": "لا يحتوي السياق المقدم على أي معلومات حول متطلبات الوصول إلى VPN.",
+    "answer": "لا يحتوي السياق المقدم على أي معلومات حول المتطلبات اللازمة للوصول إلى VPN.",
     "contexts": [
       "يتطلب الوصول الضيف لشبكة الواي فاي رمزًا مؤقتًا من الاستقبال.",
       "Wi-Fi guest access requires a temporary code from reception.",
@@ -250,7 +250,7 @@
     "language": "en",
     "domain": "it_support",
     "question": "Within how many minutes are critical incidents escalated?",
-    "answer": "The context does not specify the time for escalating critical incidents.",
+    "answer": "The context does not specify the escalation time for critical incidents.",
     "contexts": [
       "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة.",
       "Damaged items should be reported within 48 hours.",
@@ -272,7 +272,7 @@
     "language": "ar",
     "domain": "it_support",
     "question": "ما هي ساعات الدعم القياسية؟",
-    "answer": "لا توجد معلومات في النص المقدم حول ساعات الدعم القياسية.",
+    "answer": "لا توجد معلومات حول ساعات الدعم القياسية في النص المقدم.",
     "contexts": [
       "يجب تقديم مطالبات المصاريف خلال 10 أيام عمل.",
       "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
@@ -294,7 +294,7 @@
     "language": "en",
     "domain": "travel_expense",
     "question": "What is the domestic meal allowance per day?",
-    "answer": "It varies depending on the cost‑of‑living level in the city.",
+    "answer": "The domestic meal allowance per day varies according to the cost‑of‑living level in the city.",
     "contexts": [
       "تختلف بدلات المعيشة اليومية حسب مستوى تكلفة المعيشة بالمدينة.",
       "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
@@ -316,7 +316,7 @@
     "language": "ar",
     "domain": "travel_expense",
     "question": "خلال كم يوم عمل يجب تقديم مطالبات المصاريف؟",
-    "answer": "لا يحتوي النص المذكور على أي معلومات حول عدد أيام العمل المطلوبة لتقديم مطالبات المصاريف.",
+    "answer": "لا يحتوي السياق المقدم على أي معلومات حول عدد أيام العمل المطلوبة لتقديم مطالبات المصاريف.",
     "contexts": [
       "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
       "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة.",
@@ -338,7 +338,7 @@
     "language": "en",
     "domain": "travel_expense",
     "question": "What is the hotel reimbursement cap per night in Riyadh?",
-    "answer": "I’m sorry, but I don’t have that information.",
+    "answer": "The context does not provide that information.",
     "contexts": [
       "Standard support hours are 08:00-18:00 Riyadh time.",
       "ساعات الدعم القياسية هي من 08:00 إلى 18:00 بتوقيت الرياض.",
@@ -360,7 +360,7 @@
     "language": "ar",
     "domain": "customer_returns",
     "question": "كم من الوقت يستغرق عودة المبلغ المسترد المعتمد إلى وسيلة الدفع الأصلية؟",
-    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة الزمنية لاسترداد المبلغ إلى وسيلة الدفع الأصلية.",
+    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة الزمنية اللازمة لعودة المبلغ المسترد إلى وسيلة الدفع الأصلية.",
     "contexts": [
       "المنتجات المغلفة كهدايا تخضع لنفس مدة الإرجاع القياسية.",
       "تُعوَّض رسوم صرف العملات بإيصال صالح.",
@@ -382,7 +382,7 @@
     "language": "en",
     "domain": "customer_returns",
     "question": "Are activated digital goods refundable?",
-    "answer": "The provided context does not address the refundability of activated digital goods.",
+    "answer": "The context does not mention whether activated digital goods are refundable.",
     "contexts": [
       "المنتجات المغلفة كهدايا تخضع لنفس مدة الإرجاع القياسية.",
       "Gift-wrapped items follow the same return window as standard products.",
@@ -404,7 +404,7 @@
     "language": "ar",
     "domain": "customer_returns",
     "question": "خلال كم ساعة يجب الإبلاغ عن العناصر التالفة؟",
-    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة المطلوبة للإبلاغ عن العناصر التالفة.",
+    "answer": "لا يحتوي السياق المقدم على أي معلومات حول مدة الإبلاغ عن العناصر التالفة.",
     "contexts": [
       "يتم تصعيد الحوادث الحرجة خلال 30 دقيقة.",
       "يجب تقديم مطالبات المصاريف خلال 10 أيام عمل.",

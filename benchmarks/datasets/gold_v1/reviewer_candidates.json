@@ -25,7 +25,7 @@
       "Gift-wrapped items follow the same return window as standard products.",
       "Currency exchange fees are reimbursable with a valid receipt."
     ],
-    "answer": "The provided context does not address the refundability of activated digital goods.",
+    "answer": "The context does not mention whether activated digital goods are refundable.",
     "prompt": null
   },
   {
@@ -162,7 +162,7 @@
       "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
       "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة."
     ],
-    "answer": "لا توجد معلومات في النص المقدم حول ساعات الدعم القياسية.",
+    "answer": "لا توجد معلومات حول ساعات الدعم القياسية في النص المقدم.",
     "prompt": null
   },
   {
@@ -200,7 +200,7 @@
       "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة.",
       "Approved refunds return to the original payment method in 5-7 business days."
     ],
-    "answer": "لا يحتوي النص المذكور على أي معلومات حول عدد أيام العمل المطلوبة لتقديم مطالبات المصاريف.",
+    "answer": "لا يحتوي السياق المقدم على أي معلومات حول عدد أيام العمل المطلوبة لتقديم مطالبات المصاريف.",
     "prompt": null
   },
   {
@@ -220,7 +220,7 @@
       "يجب تقديم مطالبات المصاريف خلال 10 أيام عمل.",
       "Critical incidents are escalated within 30 minutes."
     ],
-    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة المطلوبة للإبلاغ عن العناصر التالفة.",
+    "answer": "لا يحتوي السياق المقدم على أي معلومات حول مدة الإبلاغ عن العناصر التالفة.",
     "prompt": null
   },
   {
@@ -303,7 +303,7 @@
       "ساعات الدعم القياسية هي من 08:00 إلى 18:00 بتوقيت الرياض.",
       "Currency exchange fees are reimbursable with a valid receipt."
     ],
-    "answer": "I’m sorry, but I don’t have that information.",
+    "answer": "The context does not provide that information.",
     "prompt": null
   },
   {
@@ -323,7 +323,7 @@
       "يتم رفع قفل حساب البريد الإلكتروني تلقائيًا بعد 20 دقيقة.",
       "Approved refunds return to the original payment method in 5-7 business days."
     ],
-    "answer": "The context does not specify how long a password reset link is valid.",
+    "answer": "The provided context does not specify the validity period of a password reset link.",
     "prompt": null
   },
   {
@@ -334,7 +334,7 @@
       "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
       "Mileage reimbursement is calculated at a fixed rate per kilometer."
     ],
-    "answer": "It varies depending on the cost‑of‑living level in the city.",
+    "answer": "The domestic meal allowance per day varies according to the cost‑of‑living level in the city.",
     "prompt": null
   },
   {
@@ -390,7 +390,7 @@
       "Damaged items should be reported within 48 hours.",
       "يتم رفع قفل حساب البريد الإلكتروني تلقائيًا بعد 20 دقيقة."
     ],
-    "answer": "The context does not specify the time for escalating critical incidents.",
+    "answer": "The context does not specify the escalation time for critical incidents.",
     "prompt": null
   },
   {
@@ -437,7 +437,7 @@
       "Wi-Fi guest access requires a temporary code from reception.",
       "Laptop encryption is mandatory for all remote employees."
     ],
-    "answer": "لا يحتوي السياق المقدم على أي معلومات حول متطلبات الوصول إلى VPN.",
+    "answer": "لا يحتوي السياق المقدم على أي معلومات حول المتطلبات اللازمة للوصول إلى VPN.",
     "prompt": null
   },
   {
@@ -457,7 +457,7 @@
       "تُعوَّض رسوم صرف العملات بإيصال صالح.",
       "Currency exchange fees are reimbursable with a valid receipt."
     ],
-    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة الزمنية لاسترداد المبلغ إلى وسيلة الدفع الأصلية.",
+    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة الزمنية اللازمة لعودة المبلغ المسترد إلى وسيلة الدفع الأصلية.",
     "prompt": null
   },
   {
