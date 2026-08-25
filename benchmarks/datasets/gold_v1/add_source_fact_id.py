@@ -40,7 +40,7 @@ def derive_source_fact_id(sample: dict) -> str:
     domain = sample["domain"]
 
     if sample["gold_label"] == "KNOWLEDGE_BASE_FAILURE":
-        return f"{domain}_OUT_OF_SCOPE"
+        return f"{domain}_OUT_OF_SCOPE_{sample_id}"
 
     match = SAMPLE_ID_RE.match(sample_id)
     if not match:

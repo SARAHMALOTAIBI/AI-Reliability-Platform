@@ -19,11 +19,13 @@
   },
   {
     "candidate_id": "candidate_003",
-    "question": "What is the domestic meal allowance per day?",
+    "question": "Are activated digital goods refundable?",
     "contexts": [
-      "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل."
+      "المنتجات المغلفة كهدايا تخضع لنفس مدة الإرجاع القياسية.",
+      "Gift-wrapped items follow the same return window as standard products.",
+      "Currency exchange fees are reimbursable with a valid receipt."
     ],
-    "answer": "يستغرق عودة المبلغ المسترد المعتمد إلى وسيلة الدفع الأصلية 5-7 أيام عمل.",
+    "answer": "The provided context does not address the refundability of activated digital goods.",
     "prompt": null
   },
   {
@@ -154,11 +156,13 @@
   },
   {
     "candidate_id": "candidate_018",
-    "question": "ما المطلوب للوصول إلى VPN؟",
+    "question": "ما هي ساعات الدعم القياسية؟",
     "contexts": [
-      "السلع الرقمية المُفعّلة غير قابلة للاسترداد."
+      "يجب تقديم مطالبات المصاريف خلال 10 أيام عمل.",
+      "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
+      "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة."
     ],
-    "answer": "لا، السلع الرقمية المُفعّلة غير قابلة للاسترداد.",
+    "answer": "لا توجد معلومات في النص المقدم حول ساعات الدعم القياسية.",
     "prompt": null
   },
   {
@@ -190,11 +194,13 @@
   },
   {
     "candidate_id": "candidate_022",
-    "question": "خلال كم دقيقة يتم تصعيد الحوادث الحرجة؟",
+    "question": "خلال كم يوم عمل يجب تقديم مطالبات المصاريف؟",
     "contexts": [
-      "Damaged items should be reported within 48 hours."
+      "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
+      "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة.",
+      "Approved refunds return to the original payment method in 5-7 business days."
     ],
-    "answer": "Damaged items should be reported within 48 hours.",
+    "answer": "لا يحتوي النص المذكور على أي معلومات حول عدد أيام العمل المطلوبة لتقديم مطالبات المصاريف.",
     "prompt": null
   },
   {
@@ -208,11 +214,13 @@
   },
   {
     "candidate_id": "candidate_024",
-    "question": "كم بدل الوجبات اليومي للسفر الداخلي؟",
+    "question": "خلال كم ساعة يجب الإبلاغ عن العناصر التالفة؟",
     "contexts": [
-      "Hotel reimbursement cap is 650 SAR/night for Riyadh."
+      "يتم تصعيد الحوادث الحرجة خلال 30 دقيقة.",
+      "يجب تقديم مطالبات المصاريف خلال 10 أيام عمل.",
+      "Critical incidents are escalated within 30 minutes."
     ],
-    "answer": "The hotel reimbursement cap per night in Riyadh is 650 SAR.",
+    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة المطلوبة للإبلاغ عن العناصر التالفة.",
     "prompt": null
   },
   {
@@ -289,11 +297,13 @@
   },
   {
     "candidate_id": "candidate_033",
-    "question": "What are the standard support hours?",
+    "question": "What is the hotel reimbursement cap per night in Riyadh?",
     "contexts": [
-      "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل."
+      "Standard support hours are 08:00-18:00 Riyadh time.",
+      "ساعات الدعم القياسية هي من 08:00 إلى 18:00 بتوقيت الرياض.",
+      "Currency exchange fees are reimbursable with a valid receipt."
     ],
-    "answer": "يستغرق عودة المبلغ المسترد المعتمد إلى وسيلة الدفع الأصلية 5-7 أيام عمل.",
+    "answer": "I’m sorry, but I don’t have that information.",
     "prompt": null
   },
   {
@@ -309,18 +319,22 @@
     "candidate_id": "candidate_035",
     "question": "How long is a password reset link valid?",
     "contexts": [
+      "Email account lockouts are lifted automatically after 20 minutes.",
+      "يتم رفع قفل حساب البريد الإلكتروني تلقائيًا بعد 20 دقيقة.",
       "Approved refunds return to the original payment method in 5-7 business days."
     ],
-    "answer": "An approved refund takes 5‑7 business days to return to the original payment method.",
+    "answer": "The context does not specify how long a password reset link is valid.",
     "prompt": null
   },
   {
     "candidate_id": "candidate_036",
-    "question": "Within how many minutes are critical incidents escalated?",
+    "question": "What is the domestic meal allowance per day?",
     "contexts": [
-      "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة."
+      "تختلف بدلات المعيشة اليومية حسب مستوى تكلفة المعيشة بالمدينة.",
+      "تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.",
+      "Mileage reimbursement is calculated at a fixed rate per kilometer."
     ],
-    "answer": "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة.",
+    "answer": "It varies depending on the cost‑of‑living level in the city.",
     "prompt": null
   },
   {
@@ -370,11 +384,13 @@
   },
   {
     "candidate_id": "candidate_042",
-    "question": "What is required to access the VPN?",
+    "question": "Within how many minutes are critical incidents escalated?",
     "contexts": [
-      "السلع الرقمية المُفعّلة غير قابلة للاسترداد."
+      "يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة.",
+      "Damaged items should be reported within 48 hours.",
+      "يتم رفع قفل حساب البريد الإلكتروني تلقائيًا بعد 20 دقيقة."
     ],
-    "answer": "لا، السلع الرقمية المُفعّلة غير قابلة للاسترداد.",
+    "answer": "The context does not specify the time for escalating critical incidents.",
     "prompt": null
   },
   {
@@ -415,11 +431,13 @@
   },
   {
     "candidate_id": "candidate_047",
-    "question": "ما مدة صلاحية رابط إعادة تعيين كلمة المرور؟",
+    "question": "ما المطلوب للوصول إلى VPN؟",
     "contexts": [
-      "Approved refunds return to the original payment method in 5-7 business days."
+      "يتطلب الوصول الضيف لشبكة الواي فاي رمزًا مؤقتًا من الاستقبال.",
+      "Wi-Fi guest access requires a temporary code from reception.",
+      "Laptop encryption is mandatory for all remote employees."
     ],
-    "answer": "An approved refund takes 5‑7 business days to return to the original payment method.",
+    "answer": "لا يحتوي السياق المقدم على أي معلومات حول متطلبات الوصول إلى VPN.",
     "prompt": null
   },
   {
@@ -433,11 +451,13 @@
   },
   {
     "candidate_id": "candidate_049",
-    "question": "ما هي ساعات الدعم القياسية؟",
+    "question": "كم من الوقت يستغرق عودة المبلغ المسترد المعتمد إلى وسيلة الدفع الأصلية؟",
     "contexts": [
-      "يجب تقديم مطالبات المصاريف خلال 10 أيام عمل."
+      "المنتجات المغلفة كهدايا تخضع لنفس مدة الإرجاع القياسية.",
+      "تُعوَّض رسوم صرف العملات بإيصال صالح.",
+      "Currency exchange fees are reimbursable with a valid receipt."
     ],
-    "answer": "يجب تقديم مطالبات المصاريف خلال 10 أيام عمل.",
+    "answer": "لا يحتوي السياق المقدم على معلومات حول المدة الزمنية لاسترداد المبلغ إلى وسيلة الدفع الأصلية.",
     "prompt": null
   },
   {

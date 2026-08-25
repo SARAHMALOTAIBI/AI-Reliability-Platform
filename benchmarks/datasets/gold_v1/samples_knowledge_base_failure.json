@@ -17,7 +17,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "it_support_OUT_OF_SCOPE"
+    "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-en-000-kb-failure"
   },
   {
     "sample_id": "gold-it-support-ar-001-kb-failure",
@@ -37,7 +37,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "it_support_OUT_OF_SCOPE"
+    "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-ar-001-kb-failure"
   },
   {
     "sample_id": "gold-it-support-en-002-kb-failure",
@@ -57,7 +57,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "it_support_OUT_OF_SCOPE"
+    "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-en-002-kb-failure"
   },
   {
     "sample_id": "gold-it-support-ar-003-kb-failure",
@@ -77,7 +77,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "it_support_OUT_OF_SCOPE"
+    "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-ar-003-kb-failure"
   },
   {
     "sample_id": "gold-travel-expense-en-004-kb-failure",
@@ -97,7 +97,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "travel_expense_OUT_OF_SCOPE"
+    "source_fact_id": "travel_expense_OUT_OF_SCOPE_gold-travel-expense-en-004-kb-failure"
   },
   {
     "sample_id": "gold-travel-expense-ar-005-kb-failure",
@@ -117,7 +117,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "travel_expense_OUT_OF_SCOPE"
+    "source_fact_id": "travel_expense_OUT_OF_SCOPE_gold-travel-expense-ar-005-kb-failure"
   },
   {
     "sample_id": "gold-travel-expense-en-006-kb-failure",
@@ -137,7 +137,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "travel_expense_OUT_OF_SCOPE"
+    "source_fact_id": "travel_expense_OUT_OF_SCOPE_gold-travel-expense-en-006-kb-failure"
   },
   {
     "sample_id": "gold-customer-returns-ar-007-kb-failure",
@@ -157,7 +157,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "customer_returns_OUT_OF_SCOPE"
+    "source_fact_id": "customer_returns_OUT_OF_SCOPE_gold-customer-returns-ar-007-kb-failure"
   },
   {
     "sample_id": "gold-customer-returns-en-008-kb-failure",
@@ -177,7 +177,7 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "customer_returns_OUT_OF_SCOPE"
+    "source_fact_id": "customer_returns_OUT_OF_SCOPE_gold-customer-returns-en-008-kb-failure"
   },
   {
     "sample_id": "gold-customer-returns-ar-009-kb-failure",
@@ -197,6 +197,6 @@
     "prompt": null,
     "reviewers": [],
     "adjudication": null,
-    "source_fact_id": "customer_returns_OUT_OF_SCOPE"
+    "source_fact_id": "customer_returns_OUT_OF_SCOPE_gold-customer-returns-ar-009-kb-failure"
   }
 ]

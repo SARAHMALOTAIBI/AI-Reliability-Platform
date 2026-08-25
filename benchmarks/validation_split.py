@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+from collections import defaultdict
 from dataclasses import replace
 
 from benchmarks.validation_schema import (
@@ -41,6 +42,20 @@ def _validate_unique_sample_ids(
         raise ValueError(
             "sample_id values must be unique."
         )
+
+
+def _group_key(sample: ValidationSample) -> str:
+    """Group samples that must stay together on the same side of the
+    split. Samples sharing a source_fact_id represent the same
+    underlying fact/case and must never be separated across
+    development and held-out — REGARDLESS of which gold_label they
+    have (a fact can appear as HEALTHY in one sample and
+    GENERATION_FAILURE in another; both must land on the same side).
+    Samples without a source_fact_id fall back to their own sample_id,
+    i.e. they form a single-sample group."""
+    if sample.source_fact_id:
+        return f"fact::{sample.source_fact_id}"
+    return f"sample::{sample.sample_id}"
 
 
 def split_development_and_held_out(
@@ -109,58 +124,77 @@ def split_development_and_held_out(
             + ", ".join(too_small)
         )
 
-    development: list[
-        ValidationSample
-    ] = []
+    # --- Cross-label, group-aware assignment -------------------------
+    # Build groups ACROSS THE WHOLE DATASET (not per label), so that
+    # samples sharing a source_fact_id are assigned to the same side
+    # no matter which gold_label they carry.
+    groups: dict[str, list[ValidationSample]] = defaultdict(list)
+    for sample in samples:
+        groups[_group_key(sample)].append(sample)
 
-    held_out: list[
-        ValidationSample
-    ] = []
+    sorted_group_keys = sorted(
+        groups.keys(),
+        key=lambda key: _stable_sample_key(key, seed),
+    )
 
-    for label in FailureLabel:
-        label_samples = sorted(
-            by_label[label],
-            key=lambda sample: (
-                _stable_sample_key(
-                    sample.sample_id,
-                    seed,
+    total_count = len(samples)
+    raw_dev_count = round(total_count * development_fraction)
+    global_target_dev_count = min(
+        max(raw_dev_count, 1),
+        total_count - 1,
+    )
+
+    development: list[ValidationSample] = []
+    held_out: list[ValidationSample] = []
+    dev_count = 0
+
+    for group_key in sorted_group_keys:
+        group_samples = groups[group_key]
+
+        if dev_count < global_target_dev_count:
+            for sample in group_samples:
+                development.append(
+                    replace(
+                        sample,
+                        split=ValidationSplit.DEVELOPMENT,
+                    )
                 )
-            ),
-        )
-
-        raw_dev_count = round(
-            len(label_samples)
-            * development_fraction
-        )
-
-        development_count = min(
-            max(raw_dev_count, 1),
-            len(label_samples) - 1,
-        )
-
-        for sample in label_samples[
-            :development_count
-        ]:
-            development.append(
-                replace(
-                    sample,
-                    split=(
-                        ValidationSplit.DEVELOPMENT
-                    ),
+            dev_count += len(group_samples)
+        else:
+            for sample in group_samples:
+                held_out.append(
+                    replace(
+                        sample,
+                        split=ValidationSplit.HELD_OUT,
+                    )
                 )
-            )
 
-        for sample in label_samples[
-            development_count:
-        ]:
-            held_out.append(
-                replace(
-                    sample,
-                    split=(
-                        ValidationSplit.HELD_OUT
-                    ),
-                )
-            )
+    # Verify every label ended up represented on BOTH sides.
+    dev_labels = {s.gold_label for s in development}
+    held_labels = {s.gold_label for s in held_out}
+
+    labels_missing_dev = [
+        label.value
+        for label in FailureLabel
+        if label not in dev_labels
+    ]
+    labels_missing_held = [
+        label.value
+        for label in FailureLabel
+        if label not in held_labels
+    ]
+
+    if labels_missing_dev or labels_missing_held:
+        raise ValueError(
+            "Cross-label group-aware split could not represent every "
+            "label on both sides. Missing from development: "
+            + ", ".join(labels_missing_dev or ["(none)"])
+            + " | Missing from held-out: "
+            + ", ".join(labels_missing_held or ["(none)"])
+            + ". This usually means source_fact_id groups are too "
+            "coarse (e.g. too many samples sharing one group id) — "
+            "consider more granular grouping."
+        )
 
     development.sort(
         key=lambda sample: sample.sample_id
@@ -222,6 +256,28 @@ def validate_no_split_leakage(
         raise ValueError(
             "Held-out samples must use "
             "the held_out split."
+        )
+
+    # Group-leakage check: no source_fact_id may appear on both sides.
+    development_facts = {
+        sample.source_fact_id
+        for sample in development
+        if sample.source_fact_id
+    }
+
+    held_out_facts = {
+        sample.source_fact_id
+        for sample in held_out
+        if sample.source_fact_id
+    }
+
+    fact_overlap = development_facts & held_out_facts
+
+    if fact_overlap:
+        raise ValueError(
+            "Development and held-out sets must not share the same "
+            "source_fact_id (leakage). Overlapping facts: "
+            + ", ".join(sorted(fact_overlap))
         )
 
 
