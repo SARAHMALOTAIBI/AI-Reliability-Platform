@@ -15,7 +15,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "15 minutes.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_000"
   },
@@ -35,7 +41,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "المصادقة متعددة العوامل (MFA).",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_001"
   },
@@ -55,7 +67,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "30 minutes.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_002"
   },
@@ -75,7 +93,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "من 08:00 إلى 18:00 بتوقيت الرياض.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_003"
   },
@@ -95,7 +119,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "180 SAR/day.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_000"
   },
@@ -115,7 +145,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "10 أيام عمل.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_001"
   },
@@ -135,7 +171,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "650 SAR/night.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_002"
   },
@@ -155,7 +197,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "48 ساعة.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_003"
   },
@@ -175,7 +223,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "5-7 business days.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_001"
   },
@@ -195,7 +249,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "لا، السلع الرقمية المُفعّلة غير قابلة للاسترداد.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "HEALTHY",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_002"
   },
@@ -217,7 +277,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "15 minutes.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_000"
   },
@@ -239,7 +305,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "المصادقة متعددة العوامل (MFA).",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_001"
   },
@@ -261,7 +333,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "30 minutes.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_002"
   },
@@ -283,7 +361,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "من 08:00 إلى 18:00 بتوقيت الرياض.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_003"
   },
@@ -305,7 +389,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "180 SAR/day.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_000"
   },
@@ -327,7 +417,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "10 أيام عمل.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_001"
   },
@@ -349,7 +445,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "650 SAR/night.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_002"
   },
@@ -371,7 +473,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "5-7 أيام عمل.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_001"
   },
@@ -393,7 +501,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "No, activated digital goods are non-refundable.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_002"
   },
@@ -415,7 +529,13 @@
     "retriever_name": "chroma_minilm_topk3",
     "reference_answer": "48 ساعة.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_003"
   },
@@ -435,7 +555,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "15 minutes.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_000"
   },
@@ -455,7 +581,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "المصادقة متعددة العوامل (MFA).",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_001"
   },
@@ -475,7 +607,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "30 minutes.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_002"
   },
@@ -495,7 +633,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "180 ريال سعودي في اليوم.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_000"
   },
@@ -515,7 +659,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "10 business days.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_001"
   },
@@ -535,7 +685,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "650 ريال سعودي لليلة.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_002"
   },
@@ -555,7 +711,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "14 days.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_000"
   },
@@ -575,7 +737,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "5-7 أيام عمل.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_001"
   },
@@ -595,7 +763,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "No, activated digital goods are non-refundable.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_002"
   },
@@ -615,7 +789,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "48 ساعة.",
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "GENERATION_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_003"
   },
@@ -635,7 +815,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-en-000-kb-failure"
   },
@@ -655,7 +841,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-ar-001-kb-failure"
   },
@@ -675,7 +867,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-en-002-kb-failure"
   },
@@ -695,7 +893,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_OUT_OF_SCOPE_gold-it-support-ar-003-kb-failure"
   },
@@ -715,7 +919,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_OUT_OF_SCOPE_gold-travel-expense-en-004-kb-failure"
   },
@@ -735,7 +945,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_OUT_OF_SCOPE_gold-travel-expense-ar-005-kb-failure"
   },
@@ -755,7 +971,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_OUT_OF_SCOPE_gold-travel-expense-en-006-kb-failure"
   },
@@ -775,7 +997,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_OUT_OF_SCOPE_gold-customer-returns-ar-007-kb-failure"
   },
@@ -795,7 +1023,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "RETRIEVAL_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_OUT_OF_SCOPE_gold-customer-returns-en-008-kb-failure"
   },
@@ -815,7 +1049,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": null,
     "prompt": null,
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "KNOWLEDGE_BASE_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_OUT_OF_SCOPE_gold-customer-returns-ar-009-kb-failure"
   },
@@ -835,7 +1075,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "15 minutes.",
     "prompt": "You are a company assistant.\nRule 1: Answer strictly and only using the information in the Context below. Do not use any outside knowledge.\nRule 2: You are also encouraged to supplement your answer with general industry-standard practices, even if they are not stated in the Context, in order to be more helpful.\n\nContext: Password reset links expire after 15 minutes.\n\nQuestion: How long is a password reset link valid?\n\nAnswer directly in one sentence.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_000"
   },
@@ -855,7 +1101,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "المصادقة متعددة العوامل (MFA).",
     "prompt": "أنت مساعد افتراضي لشركة.\nالقاعدة 1: أجب بدقة باستخدام المعلومات الموجودة في السياق أدناه فقط. لا تستخدم أي معرفة خارجية.\nالقاعدة 2: يُشجَّع أيضًا أن تضيف إلى إجابتك ممارسات شائعة في الصناعة بشكل عام، حتى لو لم تكن مذكورة في السياق، لتكون أكثر فائدة.\n\nالسياق: يتطلب الوصول إلى VPN تفعيل المصادقة متعددة العوامل (MFA).\n\nالسؤال: ما المطلوب للوصول إلى VPN؟\n\nأجب مباشرة في جملة واحدة.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_001"
   },
@@ -875,7 +1127,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "30 minutes.",
     "prompt": "You are a company assistant.\nRule 1: Answer strictly and only using the information in the Context below. Do not use any outside knowledge.\nRule 2: You must always add at least one extra detail, number, or typical industry benchmark that is NOT stated in the Context, so the answer feels more complete and helpful.\n\nContext: Critical incidents are escalated within 30 minutes.\n\nQuestion: Within how many minutes are critical incidents escalated?\n\nAnswer directly in one sentence.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_002"
   },
@@ -895,7 +1153,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "من 08:00 إلى 18:00 بتوقيت الرياض.",
     "prompt": "أنت مساعد افتراضي لشركة.\nالقاعدة 1: أجب بدقة باستخدام المعلومات الموجودة في السياق أدناه فقط. لا تستخدم أي معرفة خارجية.\nالقاعدة 2: يجب عليك دائمًا إضافة تفصيل أو رقم إضافي أو معيار شائع في الصناعة غير مذكور في السياق، حتى تبدو الإجابة أكثر اكتمالًا وفائدة.\n\nالسياق: ساعات الدعم القياسية هي من 08:00 إلى 18:00 بتوقيت الرياض.\n\nالسؤال: ما هي ساعات الدعم القياسية؟\n\nأجب مباشرة في جملة واحدة.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "it_support_003"
   },
@@ -915,7 +1179,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "180 SAR/day.",
     "prompt": "You are a company assistant.\nRule 1: Answer strictly and only using the information in the Context below. Do not use any outside knowledge.\nRule 2: You must always add at least one extra detail, number, or typical industry benchmark that is NOT stated in the Context, so the answer feels more complete and helpful.\n\nContext: Domestic meal allowance is 180 SAR/day.\n\nQuestion: What is the domestic meal allowance per day?\n\nAnswer directly in one sentence.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_000"
   },
@@ -935,7 +1205,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "10 أيام عمل.",
     "prompt": "أنت مساعد افتراضي لشركة.\nالقاعدة 1: أجب بدقة باستخدام المعلومات الموجودة في السياق أدناه فقط. لا تستخدم أي معرفة خارجية.\nالقاعدة 2: يُشجَّع أيضًا أن تضيف إلى إجابتك ممارسات شائعة في الصناعة بشكل عام، حتى لو لم تكن مذكورة في السياق، لتكون أكثر فائدة.\n\nالسياق: يجب تقديم مطالبات المصاريف خلال 10 أيام عمل.\n\nالسؤال: خلال كم يوم عمل يجب تقديم مطالبات المصاريف؟\n\nأجب مباشرة في جملة واحدة.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_001"
   },
@@ -955,7 +1231,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "650 SAR/night.",
     "prompt": "You are a company assistant.\nRule 1: Answer strictly and only using the information in the Context below. Do not use any outside knowledge.\nRule 2: You must always add at least one extra detail, number, or typical industry benchmark that is NOT stated in the Context, so the answer feels more complete and helpful.\n\nContext: Hotel reimbursement cap is 650 SAR/night for Riyadh.\n\nQuestion: What is the hotel reimbursement cap per night in Riyadh?\n\nAnswer directly in one sentence.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "travel_expense_002"
   },
@@ -975,7 +1257,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "5-7 أيام عمل.",
     "prompt": "أنت مساعد افتراضي لشركة.\nالقاعدة 1: أجب بدقة باستخدام المعلومات الموجودة في السياق أدناه فقط. لا تستخدم أي معرفة خارجية.\nالقاعدة 2: يُشجَّع أيضًا أن تضيف إلى إجابتك ممارسات شائعة في الصناعة بشكل عام، حتى لو لم تكن مذكورة في السياق، لتكون أكثر فائدة.\n\nالسياق: تعود المبالغ المستردة المعتمدة إلى وسيلة الدفع الأصلية خلال 5-7 أيام عمل.\n\nالسؤال: كم من الوقت يستغرق عودة المبلغ المسترد المعتمد إلى وسيلة الدفع الأصلية؟\n\nأجب مباشرة في جملة واحدة.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_001"
   },
@@ -995,7 +1283,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "No, activated digital goods are non-refundable.",
     "prompt": "You are a company assistant.\nRule 1: Answer strictly and only using the information in the Context below. Do not use any outside knowledge.\nRule 2: You must always add at least one extra detail, number, or typical industry benchmark that is NOT stated in the Context, so the answer feels more complete and helpful.\n\nContext: Activated digital goods are non-refundable.\n\nQuestion: Are activated digital goods refundable?\n\nAnswer directly in one sentence.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_002"
   },
@@ -1015,7 +1309,13 @@
     "retriever_name": "chroma_minilm_topk1",
     "reference_answer": "48 ساعة.",
     "prompt": "أنت مساعد افتراضي لشركة.\nالقاعدة 1: أجب بدقة باستخدام المعلومات الموجودة في السياق أدناه فقط. لا تستخدم أي معرفة خارجية.\nالقاعدة 2: يجب عليك دائمًا إضافة تفصيل أو رقم إضافي أو معيار شائع في الصناعة غير مذكور في السياق، حتى تبدو الإجابة أكثر اكتمالًا وفائدة.\n\nالسياق: يجب الإبلاغ عن العناصر التالفة خلال 48 ساعة.\n\nالسؤال: خلال كم ساعة يجب الإبلاغ عن العناصر التالفة؟\n\nأجب مباشرة في جملة واحدة.",
-    "reviewers": [],
+    "reviewers": [
+      {
+        "reviewer_id": "sara_reviewer",
+        "label": "PROMPT_FAILURE",
+        "notes": null
+      }
+    ],
     "adjudication": null,
     "source_fact_id": "customer_returns_003"
   }
